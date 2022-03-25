@@ -154,7 +154,7 @@ import jwt
 from django.conf import settings
 
 from .models import Profile
-from .serializers import LoginSerializer, ProfileSerializer, VerifyOTPSerializer
+from .serializers import ProfileSerializer, VerifyOTPSerializer
 from django.contrib.auth import authenticate
 from passlib.hash import django_pbkdf2_sha256 as handler
 #from rest_framework_simplejwt.serializers import VerifyJSONWebTokenSerializer
@@ -210,13 +210,15 @@ def send_otp(mobile,otp):
 
     print(response.text)
 
+
+
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = ProfileSerializer
     def post(self, request):
         mobile = request.data['mobile']
         data = Profile.objects.filter(mobile = mobile).first()
-        if data:
+        if data is not None:
             serializer = self.serializer_class(data=request.data)
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
@@ -233,6 +235,7 @@ class RegistrationAPIView(APIView):
             serializer = self.serializer_class(data=request.data)
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
+               
                 instance = serializer.save()
                 content = {'mobile': instance.mobile, 'otp': instance.otp}
                 mobile = instance.mobile
@@ -256,12 +259,16 @@ class VerifyOTPView(APIView):
                 old = old.first()
                 otp = old.otp
                 if str(otp) == str(otp_sent):
-                    return Response({
-                            'status' : True, 
-                            'detail' : 'Congratulations! OTP matched'
-                        })
+                    serializer = self.serializer_class(data=request.data)
+                    mobile = request.data['mobile']
+                    if serializer.is_valid(raise_exception=True):
+                        instance = serializer.save()
+                        content = {'mobile': instance.mobile, 'otp': instance.otp, 'name':instance.name, 'username':instance.username, 'logo':instance.logo, 'profile_id': instance.profile_id }
+                        return Response(content, status=status.HTTP_201_CREATED)
                 else:
                         return Response({
                             'status' : False, 
                             'detail' : 'OTP incorrect, please try again'
                         })
+
+

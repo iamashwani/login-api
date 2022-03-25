@@ -2,7 +2,8 @@
 from django.urls import path,include
 from .views import RegistrationAPIView, VerifyOTPView
 # from rest_framework import routers
-# from myapp.views import registration
+# from myapp.views import registratio
+
 
 
 
@@ -18,3 +19,4 @@ urlpatterns = [
    
     
 ]
+
