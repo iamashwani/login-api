@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'cart',
     'rest_framework',
     'rest_framework_simplejwt',
+    'wellet',
 ]
 
 
