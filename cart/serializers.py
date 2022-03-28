@@ -33,6 +33,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 BASE_DIR = Path(__file__).resolve().parent.parent
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,8 +58,7 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
         model = User
         fields = ['mobile','otp']
         
-    def create(self,validated_data):
-        
+    def create(self,validated_data): 
         instance = self.Meta.model(**validated_data)
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords,k = 6)))
@@ -67,11 +68,14 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
         path = os.path.join(BASE_DIR, 'static')
         dir_list = os.listdir(path)
         random_logo = random.choice(dir_list)
+    
         # file ='logo/'
         # fs = FileSystemStorage(location = file)
         # filename = fs.save(random_logo)
         # file_url = fs.url(filename,)
-        instance = self.Meta.model.objects.update_or_create(**validated_data, defaults = dict(username = res,name = instance.mobile ,logo = random_logo, profile_id = res))[0]
+        # default_storage.save('path/to/file', ContentFile(b'new content'))
+        # MEDIA_ROOT= os.path.join(BASE_DIR, 'cart/media')
+        instance = self.Meta.model.objects.update_or_create(**validated_data, defaults = dict(username = res,name = instance.mobile ,logo = random_logo, profile_id = res,logo_path=random_logo))[0]
         instance.save()
         return instance
          
