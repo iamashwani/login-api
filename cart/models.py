@@ -1,13 +1,12 @@
-
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 # Create your models here.
 from django.utils.crypto import get_random_string
 import os
 import random
 
-class Profile(models.Model):
-    
+
+class User(models.Model):
     mobile = models.CharField(max_length=20)
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200)
