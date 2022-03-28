@@ -25,7 +25,7 @@
 from email.policy import default
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import Profile
+from .models import User
 import pyotp
 import random
 import os
@@ -36,7 +36,7 @@ from django.core.files.storage import FileSystemStorage
 BASE_DIR = Path(__file__).resolve().parent.parent
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = User
         fields = ['mobile']
     def create(self, validated_data):
         
@@ -53,7 +53,7 @@ from django.core.files.base import ContentFile
 class VerifyOTPSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model = Profile
+        model = User
         fields = ['mobile','otp']
         
     def create(self,validated_data):
