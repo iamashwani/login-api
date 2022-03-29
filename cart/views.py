@@ -4,15 +4,8 @@ from rest_framework.views import APIView
 from django.conf import settings
 from .models import User
 from .serializers import ProfileSerializer, VerifyOTPSerializer
-from django.contrib.auth import authenticate
-from passlib.hash import django_pbkdf2_sha256 as handler
-#from rest_framework_simplejwt.serializers import VerifyJSONWebTokenSerializer
-# from django.core.exceptions import ValidationError
-from rest_framework.permissions import AllowAny, IsAuthenticated
-# from rest_framework_simplejwt.settings import api_settings
-# from django.contrib.auth.models import update_last_login
-
-from django.views.generic import View
+from rest_framework.decorators import APIView
+from rest_framework.permissions import AllowAny
 import requests
 
 
@@ -51,7 +44,6 @@ class RegistrationAPIView(APIView):
             serializer = self.serializer_class(data=request.data)
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
-               
                 instance = serializer.save()
                 content = {'mobile': instance.mobile, 'otp': instance.otp}
                 mobile = instance.mobile
@@ -88,5 +80,4 @@ class VerifyOTPView(APIView):
                             'status' : False, 
                             'detail' : 'OTP incorrect, please try again'
                         })
-
 
