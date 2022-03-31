@@ -24,18 +24,14 @@
 #     #     return instance.otp
 from email.policy import default
 from rest_framework import serializers
-from django.contrib.auth import authenticate
+
 from .models import User
 import pyotp
 import random
 import os
-from django.db.models import Q
-from django.conf import settings
-from django.conf.urls.static import static
+
 from pathlib import Path
-from django.core.files.storage import FileSystemStorage
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,7 +44,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             secret = pyotp.random_base32()
             totp = pyotp.TOTP(secret, interval=300)
             otp = totp.now()
-            instance = self.Meta.model.objects.update_or_create(**validated_data, defaults=dict(otp=str(random.randint(1000 , 9999))))[0]            
+            mywords = "123456789"
+            res = "expert@" + str(''.join(random.choices(mywords,k = 6)))
+            instance = self.Meta.model.objects.update_or_create(**validated_data, defaults=dict(otp=str(random.randint(1000 , 9999)),username = res,name = instance.mobile ,logo = instance.logo.url, profile_id = res,))[0]            
             instance.save()
             return instance
 
@@ -59,16 +57,7 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
         model = User
         fields = ['mobile','otp']
         
-    def create(self,validated_data): 
-        instance = self.Meta.model(**validated_data)
-        mywords = "123456789"
-        res = "expert@" + str(''.join(random.choices(mywords,k = 6)))
-        path = os.path.join(BASE_DIR, 'media')
-        dir_list = os.listdir(path)
-        random_logo = random.choice(dir_list)
-        instance = self.Meta.model.objects.update_or_create(**validated_data, defaults = dict(username = res,name = instance.mobile ,logo = random_logo, profile_id = res,))[0]
-        instance.save()
-        return instance
+    
 
 
          

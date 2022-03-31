@@ -8,20 +8,22 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from random import choice
-# def random_image():
-#     directory = os.path.join(settings.BASE_DIR, 'static')
-#     files = os.listdir(directory)
-#     images = [file for file in files if os.path.isfile(os.path.join(directory, file))]
-#     rand = choice(images)
-#     return rand
+
+
+
 class User(models.Model):
     mobile = models.CharField(max_length=20)
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200)
     username = models.CharField(max_length=200)  
     #logo_path = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to ="profile/", null=True,blank =True)
+    logo = models.ImageField(upload_to='profile/', default = 'image.jpg', null=True, blank=True)
     profile_id = models.CharField(max_length=200)
+
+  
+
+    
+  
 
     
     # upload_path='absolute path'
