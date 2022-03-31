@@ -4,6 +4,8 @@ from django.db import models
 from django.utils.crypto import get_random_string
 import os
 import random
+from django.utils.translation import gettext_lazy as _
+from django.utils.crypto import get_random_string
 
 
 class User(models.Model):
@@ -11,5 +13,15 @@ class User(models.Model):
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200)
     username = models.CharField(max_length=200)
-    logo = models.FileField(upload_to ='profile/')
+    #logo_path = models.CharField(max_length=200)
+    logo = models.ImageField(upload_to='profile/',null=True, blank=True)
     profile_id = models.CharField(max_length=200)
+
+
+class Wallet(models.Model):
+    user = models.ForeignKey(User,null=True, on_delete=models.CASCADE)
+    # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
+    total_amount = models.DecimalField(_('total'), max_digits=10, decimal_places=2, default=0)
+    add_amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
+    win_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
+    deduct_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
