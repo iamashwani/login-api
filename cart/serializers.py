@@ -42,9 +42,25 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ['mobile']
 
+    # def create(self, validated_data):
+    #     # import pdb
+    #     # pdb.set_trace()
+    #     instance = self.Meta.model(**validated_data)
+    #     global totp
+    #     secret = pyotp.random_base32()
+    #     totp = pyotp.TOTP(secret, interval=300)
+    #     otp = totp.now()
+    #     mywords = "123456789"
+    #     res = "expert@" + str(''.join(random.choices(mywords, k=6)))
+    #     path = os.path.join(BASE_DIR, 'static\images')
+    #     dir_list = os.listdir(path,)
+    #     random_logo = random.choice(dir_list,)
+    #     instance = User.objects.create(**validated_data,otp=otp,username=res, name=instance.mobile,
+    #                                                                       logo=random_logo, profile_id=res, )[0]
+    #     instance.save()
+    #     return
+
     def create(self, validated_data):
-        # import pdb
-        # pdb.set_trace()
         instance = self.Meta.model(**validated_data)
         global totp
         secret = pyotp.random_base32()
@@ -52,17 +68,25 @@ class ProfileSerializer(serializers.ModelSerializer):
         otp = totp.now()
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords, k=6)))
-        path = os.path.join(BASE_DIR, 'static')
-        dir_list = os.listdir(path)
+        path = os.path.join(BASE_DIR, 'static\images')
+        dir_list = os.listdir(path, )
         random_logo = random.choice(dir_list)
 
 
-        instance = self.Meta.model.objects.update_or_create(**validated_data,
-                                                            defaults=dict(otp=str(random.randint(1000, 9999)),
-                                                                          username=res, name=instance.mobile,
-                                                                          logo=random_logo, profile_id=res, ))[0]
+        mobile = validated_data.pop('mobile')
+        obj = User.objects.create(**validated_data,otp=otp,username=res, name=mobile,logo=random_logo
+                                                                          )
+        return obj
+
+
+
+
+    def update(self, instance, validated_data):
+        mobile = validated_data.pop('mobile')
+        albums = (instance.mobile).all()
+        albums = list(albums)
+
         instance.save()
-        return instance
 
 
 # from django.core.files.base import ContentFile

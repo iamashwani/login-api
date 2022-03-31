@@ -14,7 +14,7 @@ class User(models.Model):
     name = models.CharField(max_length=200)
     username = models.CharField(max_length=200)
     #logo_path = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to='profile/',null=True, blank=True)
+    logo = models.ImageField(null=True, blank=True)
     profile_id = models.CharField(max_length=200)
 
 
