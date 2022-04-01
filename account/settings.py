@@ -138,7 +138,7 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = BASE_DIR /'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_KEY = "6mvwLeY2TkplEs5y8G4bqUD3rWCKiPOBV0ztQHh7cjXFSuZR1MbtkElpg5WTUzdfey3VGOva9hXBxi0Q"
+AUTH_KEY = "ybUL2EOKQt7PNJr95IglVhksndzjXiY8fMW40HvSFu6oeTwmxqfGtYVk4T1Ol0m5zyCeaQJSUv6DHjoB"
 
 # Rest Framework Settings
 REST_FRAMEWORK = {

@@ -35,6 +35,7 @@ class RegistrationAPIView(APIView):
                 content = {'mobile': instance.mobile, 'otp': instance.otp}
                 mobile = instance.mobile
                 otp = instance.otp
+                print("Success")
                 send_otp(mobile,otp)
                 return Response(content, status=status.HTTP_201_CREATED)
             else:
@@ -43,8 +44,9 @@ class RegistrationAPIView(APIView):
             serializer = self.serializer_class(data=request.data)
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
+               
                 instance = serializer.save()
-                content = {'mobile': instance.mobile, 'otp': instance.otp,'name':instance.name, 'username':instance.username, 'logo':instance.logo, 'profile_id': instance.profile_id}
+                content = {'mobile': instance.mobile, 'otp': instance.otp}
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile,otp)
@@ -68,14 +70,14 @@ class VerifyOTPView(APIView):
                 old = old.first()
                 otp = old.otp
                 if str(otp) == str(otp_sent):
-                    
-                        return Response({
-                            'status' : True, 
-                            'detail' : 'OTP is correct'
-                        })
+                    serializer = self.serializer_class(data=request.data)
+                    mobile = request.data['mobile']
+                    if serializer.is_valid(raise_exception=True):
+                        instance = serializer.save()
+                        content = {'mobile': instance.mobile, 'otp': instance.otp, 'name':instance.name, 'username':instance.username, 'profile_id': instance.profile_id }
+                        return Response(content, status=status.HTTP_201_CREATED)
                 else:
                         return Response({
                             'status' : False, 
                             'detail' : 'OTP incorrect, please try again'
                         })
-
