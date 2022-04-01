@@ -43,27 +43,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['mobile','name','username','logo']
         read_only_fields = ['name','username','logo']
 
-    # def create(self, validated_data):
-    #     # import pdb
-    #     # pdb.set_trace()
-    #     instance = self.Meta.model(**validated_data)
-    #     global totp
-    #     secret = pyotp.random_base32()
-    #     totp = pyotp.TOTP(secret, interval=300)
-    #     otp = totp.now()
-    #     mywords = "123456789"
-    #     res = "expert@" + str(''.join(random.choices(mywords, k=6)))
-    #     path = os.path.join(BASE_DIR, 'static\images')
-    #     dir_list = os.listdir(path,)
-    #     random_logo = random.choice(dir_list,)
-    #     instance = User.objects.create(**validated_data,otp=otp,username=res, name=instance.mobile,
-    #                                                                       logo=random_logo, profile_id=res, )[0]
-    #     instance.save()
-    #     return
-# global totp
-        # secret = pyotp.random_base32()
-        # totp = pyotp.TOTP(secret, interval=300)
-        # otp = totp.now()
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)      
         mywords = "123456789"
@@ -71,19 +50,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         path = os.path.join(BASE_DIR, 'static\images')
         dir_list = os.listdir(path, )
         random_logo = random.choice(dir_list)
-        # mobile_id = validated_data.get('mobile',None)
-        # mobile1 = User.objects.filter(mobile=mobile_id)
-        # if mobile1 is not None:
-
-        #     instance = self.Meta.model.objects.update_or_create(**validated_data,defaults=dict(otp=str(random.randint(1000, 9999)), username=instance.username, name=instance.mobile,logo=instance.logo, profile_id=instance.profile_id))[0]
-        #     instance.save()
-        #     return instance
-
-
-        # else:
-        #     instance = self.Meta.model.objects.update_or_create(**validated_data,defaults=dict(otp=str(random.randint(1000, 9999)),username=res,name=instance.mobile,logo=random_logo, profile_id=res, ))[0]
-        #     instance.save()
-        #     return instance
+       
         if self.Meta.model.objects.filter(**validated_data).exists():
             instance = self.Meta.model.objects.filter(**validated_data).last()          
             instance.otp = str(random.randint(1000 , 9999))
@@ -97,20 +64,78 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.profile_id = res
             instance.save()
         return instance
-    # def update(self, instance, validated_data):
-    #     mobile = validated_data.pop('mobile')
-    #     albums = (instance.mobile).all()
-    #     albums = list(albums)
 
-    #     instance.save()
-    #     return instance
-
-
-# from django.core.files.base import ContentFile
 class VerifyOTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['mobile', 'otp']
+
+# class UpdateUserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ('mobile','name','username','logo')
+
+#     def validate_mobile(self, mobile):
+#         user = self.context['request'].user
+#         mobile = self.context['request'].mobile
+#         if User.objects.exclude(pk=user.pk).filter(mobile=mobile).exists():
+#             raise serializers.ValidationError({"email": "This mobile is already in use."})
+#         return mobile
+
+#     def validate_username(self, username):
+#         user = self.context['request'].user
+#         username = self.context['request'].username
+#         if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+#             raise serializers.ValidationError({"username": "This username is already in use."})
+#         return username
+        
+#     def validate_name(self, name):
+#         user = self.context['request'].user
+#         name = self.context['request'].name
+#         if User.objects.exclude(pk=user.pk).filter(name=name).exists():
+#             raise serializers.ValidationError({"username": "This name is already in use."})
+#         return name
+#     def validate_logo(self, logo):
+#         user = self.context['request'].user
+#         logo = self.context['request'].logo
+#         if User.objects.exclude(pk=user.pk).filter(logo=logo).exists():
+#             raise serializers.ValidationError({"username": "This logo is already in use."})
+#         return logo
+#     def update(self, instance, validated_data):
+#             user = self.context['request'].user
+
+#             if user.mobile== instance.mobile:
+#                 raise serializers.ValidationError({"authorize": "You dont have permission for this user."})
+
+#             instance.mobile = validated_data['mobile']
+#             instance.name = validated_data['name']
+#             instance.logo = validated_data['logo']
+#             instance.username = validated_data['username']
+
+#             instance.save()
+
+#             return instance
+
+class UserProfileChangeSerializer(serializers.ModelSerializer):
+	# class Meta:
+	# 	model = User
+	# 	fields = [
+    #         'name','username','logo'
+    #     ]
+    
+    class Meta:
+        model = User
+        fields = [
+            'name','username','logo'
+        ]
+
+    # def update(self, instance, validated_data):
+    #     instance.username = validated_data.get('username')
+    #     instance.name = validated_data.get('name')
+    #     instance.logo = validated_data.get('logo')
+        
+    #     instance.save()
+    #     return instance 
 
 
 
