@@ -146,8 +146,11 @@ AUTH_KEY = "ybUL2EOKQt7PNJr95IglVhksndzjXiY8fMW40HvSFu6oeTwmxqfGtYVk4T1Ol0m5zyCe
 
 # Rest Framework Settings
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES':
-        ('rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+    # 'rest_framework.authentication.SessionAuthentication',
+    'rest_framework.authentication.BasicAuthentication',
+]
+        
 
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
     #     'rest_framework_simplejwt.authentication.JWTAuthentication',
