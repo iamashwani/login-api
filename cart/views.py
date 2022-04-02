@@ -62,10 +62,11 @@ class VerifyOTPView(APIView):
 
     def post(self, request):
         serializer = VerifyOTPSerializer(data=request.data)
-        mobile = request.data['mobile']
+        mobile = request.data.get['mobile']
         otp_sent = request.data['otp']
-
+        
         if mobile and otp_sent:
+            
             old = User.objects.filter(mobile=mobile)
             if old is not None:
                 old = old.first()
