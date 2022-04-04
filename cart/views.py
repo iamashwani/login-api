@@ -60,19 +60,19 @@ class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = VerifyOTPSerializer
 
-    def post(self, request):
+    def post(self, request,id):
+        # import pdb
+        # pdb.set_trace()
         serializer = VerifyOTPSerializer(data=request.data)
-        mobile = request.data.get['mobile']
+        # mobile = request.data['mobile']
         otp_sent = request.data['otp']
-        
-        if mobile and otp_sent:
-            
-            old = User.objects.filter(mobile=mobile)
+        otp = User.objects.get(pk=id)
+        if otp_sent:
+            old = User.objects.filter(id=otp.id)
             if old is not None:
                 old = old.first()
                 otp = old.otp
                 if str(otp) == str(otp_sent):
-
                     return Response({
                         'status': True,
                         'detail': 'OTP is correct'
