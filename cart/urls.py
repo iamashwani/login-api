@@ -1,13 +1,13 @@
 from .views import *
-from django.urls import path
-from .views import RegistrationAPIView,VerifyOTPView
-
+from django.urls import path, include
+from .views import RegistrationAPIView, VerifyOTPView
+from . import views
 
 urlpatterns = [
-    path('api/vi/register/', RegistrationAPIView.as_view()),
-    path('api/vi/verify/', VerifyOTPView.as_view()),
 
-   
-    
+    path('register/', RegistrationAPIView.as_view()),
+    path('verify/<int:id>', VerifyOTPView.as_view()),
+    path('get_profile/<int:pk>', views.Get_Profile, name='get_profile'),
+    path('update_profile/<int:pk>', views.Update_Profile, name='update_profile')
+
 ]
-

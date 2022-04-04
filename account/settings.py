@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ztja6%f-w(cfoy@$ovr-d^j9)nru!-1^+0b+!o)@%_1pvnxs^-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -130,30 +130,45 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [STATIC_DIR]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images',)
+# CURRENT_PATH = os.path.abspath(os.path.dirname(__file__).encode(0).decode('utf-8'))
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images', )
 
 MEDIA_URL = '/images/'
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+
+# STATIC_URL = '/static/'
+# MEDIA_URL = '/images/'
+#
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static'
+# ]
+#
+# MEDIA_ROOT = BASE_DIR /'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_KEY = "ybUL2EOKQt7PNJr95IglVhksndzjXiY8fMW40HvSFu6oeTwmxqfGtYVk4T1Ol0m5zyCeaQJSUv6DHjoB"
 
 # Rest Framework Settings
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES':
-#         ('rest_framework.permissions.IsAuthenticated',),
-#
-#     # 'DEFAULT_AUTHENTICATION_CLASSES': (
-#     #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-#
-#     # ),
-#
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ]
+
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+    # ),
+
+}
 
 # AUTH_USER_MODEL = 'myapp.MyUser'
 from datetime import timedelta
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),

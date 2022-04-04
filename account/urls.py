@@ -1,5 +1,4 @@
 """account URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
 Examples:
@@ -21,12 +20,14 @@ from django.views.static import serve
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-   
-    path('', include('cart.urls')),
+
+    path('api/vi/', include('cart.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+
+
+
 
 ]
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
-
