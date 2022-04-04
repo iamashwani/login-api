@@ -1,0 +1,55 @@
+from rest_framework import serializers
+from .models import User
+import random
+import os
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['mobile','name','username','logo']
+        read_only_fields = ['name','username','logo']
+
+    def create(self, validated_data):
+        instance = self.Meta.model(**validated_data)      
+        mywords = "123456789"
+        res = "expert@" + str(''.join(random.choices(mywords,k = 6)))
+        path = os.path.join(BASE_DIR, 'static\images')
+        dir_list = os.listdir(path, )
+        random_logo = random.choice(dir_list)
+
+        if self.Meta.model.objects.filter(**validated_data).exists():
+            instance = self.Meta.model.objects.filter(**validated_data).last()          
+            instance.otp = str(random.randint(1000 , 9999))
+            instance.save()
+        else:
+            instance = self.Meta.model(**validated_data)
+            instance.otp = str(random.randint(1000 , 9999))
+            instance.username = res
+            instance.name = instance.mobile
+            instance.logo = random_logo
+            instance.profile_id = random_logo
+            instance.save()
+        return instance
+
+
+class VerifyOTPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['mobile', 'otp']
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'logo', 'name']
+
+
+
+
+
+
+
+
