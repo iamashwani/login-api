@@ -49,6 +49,8 @@ class RegistrationAPIView(APIView):
                            'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
+                wallet = 10
+                wall = Wallet.objects.create(user=instance,total_amount=wallet)
                 send_otp(mobile, otp)
                 return Response(content, status=status.HTTP_201_CREATED)
             else:
@@ -59,14 +61,15 @@ class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = VerifyOTPSerializer
 
-    def post(self, request,id):
+    def post(self, request, id):
+        # import pdb
+        # pdb.set_trace()
         serializer = VerifyOTPSerializer(data=request.data)
-        #mobile = request.data['mobile']
+        # mobile = request.data['mobile']
         otp_sent = request.data['otp']
-        otp = User.objects.get(pk = id)
+        user_id = User.objects.get(id=id)
         if otp_sent:
-            
-            old = User.objects.filter(id=otp.id)
+            old = User.objects.filter(id=user_id.id)
             if old is not None:
                 old = old.first()
                 otp = old.otp

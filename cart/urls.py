@@ -10,7 +10,7 @@ from . import views
 urlpatterns = [
 
     path('register/', RegistrationAPIView.as_view()),
-    path('verify/<int:pk>', VerifyOTPView.as_view()),
+    path('verify/<int:id>', VerifyOTPView.as_view()),
     path('get_profile/<int:pk>',views.Get_Profile, name='get_profile'),
     path('update_profile/<int:pk>',views.Update_Profile, name='update_profile'),
     path('get_wallet/<int:pk>',views.get_wallet, name='get_wallet'),
