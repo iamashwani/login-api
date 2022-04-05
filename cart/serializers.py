@@ -1,7 +1,7 @@
 from email.policy import default
 from rest_framework import serializers
 
-from .models import User
+from .models import User,Wallet
 import pyotp
 import random
 import os
@@ -20,8 +20,8 @@ import pandas as pd
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['mobile', 'name', 'username', 'logo']
-        read_only_fields = ['name', 'username', 'logo']
+        fields = ['id', 'mobile', 'name', 'username', 'logo']
+        read_only_fields = ['id','name', 'username', 'logo']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
@@ -42,6 +42,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.name = instance.mobile
             instance.logo = random_logo
             instance.profile_id = random_logo
+            instance.id = instance.id
+
             instance.save()
         return instance
 
@@ -49,7 +51,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class VerifyOTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['otp']
+        fields = ['otp', 'id']
         # read_only_fields = ['mobile']
 
 
@@ -57,4 +59,10 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['name', 'username', 'logo']
+
+
+class walletserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['user', 'total_amount', 'add_amount', 'win_amount', 'deduct_amount']
 

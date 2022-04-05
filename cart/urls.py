@@ -12,6 +12,7 @@ urlpatterns = [
     path('get_profile/<int:pk>', views.Get_Profile, name='get_profile'),
     path('update_profile/<int:pk>', views.Update_Profile, name='update_profile'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('get_wallet/<int:pk>', views.get_wallet, name='get_wallet'),
 
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

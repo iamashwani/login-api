@@ -4,24 +4,27 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 from .models import User,Wallet
-from .serializers import ProfileSerializer, VerifyOTPSerializer, UserProfileChangeSerializer
+from .serializers import ProfileSerializer, VerifyOTPSerializer, UserProfileChangeSerializer,walletserializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 import requests
 from rest_framework import generics, mixins, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view
+import http.client
 
 
 def send_otp(mobile, otp):
-    url = "https://www.fast2sms.com/dev/bulkV2"
+    url = http.client.HTTPConnection("2factor.in")
     authkey = settings.AUTH_KEY
-    querystring = {"authorization": authkey, "variables_values": otp, "route": "otp", "numbers": mobile}
+    payload = ""
     headers = {
         'cache-control': "no-cache"
     }
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    print(response.text)
+    url.request("GET", "/API/V1/"+str(authkey)+"/SMS/"+str(mobile)+"/"+str(otp),payload, headers)
+    res = url.getresponse()
+    data = res.read()
+    print(data.decode("utf-8"))
 
 
 class RegistrationAPIView(APIView):
@@ -48,7 +51,7 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
+                content = {'id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
                            'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
@@ -104,3 +107,12 @@ def Update_Profile(request, pk):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+def get_wallet(request, pk):
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer(qs)
+        return Response(serializer.data, status=200)
+
+    return Response({"Something went wrong. Please try again later."}, status=404)
