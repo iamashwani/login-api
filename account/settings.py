@@ -16,6 +16,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -142,7 +144,7 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = BASE_DIR /'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_KEY = "ybUL2EOKQt7PNJr95IglVhksndzjXiY8fMW40HvSFu6oeTwmxqfGtYVk4T1Ol0m5zyCeaQJSUv6DHjoB"
+AUTH_KEY = "e1460c3b-b3f1-11ec-a4c2-0200cd936042"
 
 # Rest Framework Settings
 REST_FRAMEWORK = {
@@ -158,6 +160,8 @@ REST_FRAMEWORK = {
     # ),
 
 }
+
+
 
 # AUTH_USER_MODEL = 'myapp.MyUser'
 from datetime import timedelta
