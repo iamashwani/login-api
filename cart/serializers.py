@@ -56,8 +56,5 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
 class UserProfileChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [
-            'name', 'username', 'logo'
-        ]
-
+        fields = ['name', 'username', 'logo']
 

@@ -21,7 +21,7 @@ class User(models.Model):
 class Wallet(models.Model):
     user = models.ForeignKey(User,null=True, on_delete=models.CASCADE)
     # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
-    total_amount = models.DecimalField(_('total'), max_digits=10, decimal_places=2, default=0)
-    add_amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
+    total_amount = models.DecimalField(_('total amount'), max_digits=10, decimal_places=2, default=0)
+    add_amount = models.DecimalField(_('add amount'), max_digits=10, decimal_places=2, default=0)
     win_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
     deduct_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
