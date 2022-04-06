@@ -14,7 +14,7 @@ urlpatterns = [
     path('get_profile/<int:pk>',views.Get_Profile, name='get_profile'),
     path('update_profile/<int:pk>',views.Update_Profile, name='update_profile'),
     path('get_wallet/<int:pk>',views.get_wallet, name='get_wallet'),
-    #path('add_money/<int:pk>',views.add_money, name='add_money'),
+    path('add_money/<int:pk>',views.add_money, name='add_money'),
 
     
 ]

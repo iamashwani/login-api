@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 import http.client
 from django.db import transaction
+
 def send_otp(mobile, otp):
     url = http.client.HTTPConnection("2factor.in")
     authkey = settings.AUTH_KEY
@@ -133,27 +134,63 @@ def get_wallet(request, pk):
     
     return Response({"Something went wrong. Please try again later."}, status=404)
 
-
-# @api_view(['GET','PUT'])   
-# def add_money(request,pk):
-  
-#     qs = Wallet.objects.get(pk=pk)
-#     if request.method == 'GET':
-#         serializer = walletserializer(qs)
-#         return Response(serializer.data, status=200)
+from decimal import Decimal
+@api_view(['GET','PUT'])   
+def add_money(request,pk):
+    import pdb
+    pdb.set_trace()
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer(qs)
+        qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+        qs.save()
+        return Response(serializer.data, status=200)
         
-#     elif request.method == 'PUT':
-#         amount_to_deposit = float(request.data.get("amount"))
-#         if amount_to_deposit < 0.0 :
-#             return Response({"Amount invalid!"}, status=400)
-#         qs = Wallet.objects.get(pk=pk)
-#         serializer = walletserializer(qs)
-#         qs.total_amount = qs.total_amount + amount_to_deposit
-#         qs.save()
-#         return Response({"Deposit successful."}, status=200)
+    # elif request.method == 'PUT':
+    #     amount_to_deposit = float(request.data.get("amount", None))
+    #     if amount_to_deposit < 0.0 :
+    #         return Response({"Amount invalid!"}, status=400)
+    #     qs = Wallet.objects.get(pk=pk)
+    #     serializer = walletserializer(qs)
+    #     qs.total_amount = qs.total_amount + amount_to_deposit
+    #     qs.save()
+    #     return Response({"Deposit successful."}, status=200)
     
-#     return Response({"Something went wrong. Please try again later."}, status=404)
+    # return Response({"Something went wrong. Please try again later."}, status=404)
 
+# class Deposit_amount(APIView):
+#     permission_classes = (AllowAny,)
+#     serializer_class = walletserializer
+    
+#     def post(self, request):
+#         amount = request.data.get('amount', None)
+        
+#         success, error_msg, data = True, None, {}
+
+#         if (not amount) or (amount <= 0):
+#             success = False
+#             error_msg = "Invalid amount."
+            
+#         if success:
+#             wallet = request.user.get_wallet()
+
+#             if not wallet:
+#                 success = False
+#                 error_msg = "Wallet does not exist for user."
+                
+#         if success:
+#             with transaction.atomic():
+#                 wallet.deposit(amount)
+                
+#             data = walletserializer(wallet).data
+            
+#         return custom_response_renderer(
+#             data=data,
+#             error_msg=error_msg,
+#             status=success,
+#             status_code=status.HTTP_200_OK if success else
+#             status.HTTP_400_BAD_REQUEST
+#         )
 
 # from cart.models import Wallet  
 # wallet = User.wallet_set.create()

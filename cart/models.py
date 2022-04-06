@@ -7,7 +7,7 @@ from .errors import InsufficientBalance
 from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
 from django.conf import settings
-
+from django.db import transaction
 
 class User(models.Model):
     mobile = models.CharField(max_length=20)
@@ -26,3 +26,16 @@ class Wallet(models.Model):
     win_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
     deduct_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
     
+
+    # @transaction.atomic
+    # def deposit(self, amount):
+    #     """ Deposit `amount` to wallet.
+    #     """
+
+    #     amount = Decimal(amount)
+    #     self.transaction_set.create(
+    #         amount=amount,
+    #         running_balance=self.total_amount + amount
+    #     )
+    #     self.total_amount += amount
+    #     self.save()
