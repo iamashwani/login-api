@@ -1,21 +1,12 @@
-
-from email.policy import default
 from rest_framework import serializers
-
 from .models import User, Wallet
-import pyotp
 import random
 import os
-
 from pathlib import Path
-from django.core import files
-from django.core.files.base import ContentFile
 BASE_DIR = Path(__file__).resolve().parent.parent
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
 class ProfileSerializer(serializers.ModelSerializer):
-   
     class Meta:
         model = User
         fields = ['mobile','name','username','logo']
@@ -48,18 +39,12 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
         model = User
         fields = ['mobile', 'otp']
         read_only_fields = ['mobile']
-
-
-
 class UserProfileChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name','username','logo']
-
-   
+        fields = ['name','username','logo']  
 
 class walletserializer(serializers.ModelSerializer):
-   
     class Meta:
         model = Wallet
         fields = ['user','total_amount','add_amount','win_amount','deduct_amount']

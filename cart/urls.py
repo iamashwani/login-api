@@ -2,11 +2,6 @@ from .views import *
 from django.urls import path,include
 from .views import RegistrationAPIView,VerifyOTPView
 from . import views
-
-
-
-
-
 urlpatterns = [
 
     path('register/', RegistrationAPIView.as_view()),
@@ -15,7 +10,6 @@ urlpatterns = [
     path('update_profile/<int:pk>',views.Update_Profile, name='update_profile'),
     path('get_wallet/<int:pk>',views.get_wallet, name='get_wallet'),
     path('add_money/<int:pk>',views.add_money, name='add_money'),
-
-    
+    path('deduct_amount/<int:pk>',views.deduct_amount, name='deduct_amount')    
 ]
 

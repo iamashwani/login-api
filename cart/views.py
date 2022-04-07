@@ -8,7 +8,6 @@ from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 import http.client
-from django.db import transaction
 
 def send_otp(mobile, otp):
     url = http.client.HTTPConnection("2factor.in")
@@ -62,19 +61,18 @@ class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = VerifyOTPSerializer
 
-    def post(self, request, id):
-        # import pdb
-        # pdb.set_trace()
+    def post(self, request,id):
         serializer = VerifyOTPSerializer(data=request.data)
-        # mobile = request.data['mobile']
         otp_sent = request.data['otp']
+        mobile = request.data['mobile']
         user_id = User.objects.get(id=id)
         if otp_sent:
             old = User.objects.filter(id=user_id.id)
             if old is not None:
                 old = old.first()
                 otp = old.otp
-                if str(otp) == str(otp_sent):
+                # old = User.objects.filter(id=user_mobile.id).update(otp = otp_sent)
+                if User.objects.filter(id=user_id.id).update(otp = otp_sent):
 
                     return Response({'status': True,'detail': 'OTP is correct'})
                 else:
@@ -101,28 +99,6 @@ def Update_Profile(request,pk):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['GET'])
-# def get_wallet(request,pk):
-#     snippet = Wallet.objects.get(pk=pk)
-#     if request.method == 'GET':
-#         serializer = walletserializer(snippet)
-#         return Response(serializer.data)
-
-# class BalanceView(APIView):
-#     allowed_methods = ['get', 'post']
-#     serializer_class = walletserializer
-    
-#     def get_queryset(self):
-#         return Wallet.objects.filter(pk=self.request.user)
-    
-#     def post(self, request, *args, **kwargs):
-#         serializer = walletserializer(data = request.data)
-#         if serializer.is_valid(raise_exception = True):
-#             serializer.save()
-#             with transaction.atomic():
-#                 Wallet.objects.filter(pk=self.request.user).update(total_amount = f'total_amount' + serializer.validated_data.get('total_amount', 0))
-#                 return Response({"message":'money added successfully'}, status = status.HTTP_201_CREATED)
-#         return Response({status: status.HTTP_400_BAD_REQUEST})
     
 @api_view(['GET'])
 
@@ -134,99 +110,30 @@ def get_wallet(request, pk):
     
     return Response({"Something went wrong. Please try again later."}, status=404)
 
-from decimal import Decimal
 @api_view(['GET','PUT'])   
 def add_money(request,pk):
-    import pdb
-    pdb.set_trace()
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer(qs)
         qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
         qs.save()
         return Response(serializer.data, status=200)
-        
-    # elif request.method == 'PUT':
-    #     amount_to_deposit = float(request.data.get("amount", None))
-    #     if amount_to_deposit < 0.0 :
-    #         return Response({"Amount invalid!"}, status=400)
-    #     qs = Wallet.objects.get(pk=pk)
-    #     serializer = walletserializer(qs)
-    #     qs.total_amount = qs.total_amount + amount_to_deposit
-    #     qs.save()
-    #     return Response({"Deposit successful."}, status=200)
-    
-    # return Response({"Something went wrong. Please try again later."}, status=404)
 
-# class Deposit_amount(APIView):
-#     permission_classes = (AllowAny,)
-#     serializer_class = walletserializer
-    
-#     def post(self, request):
-#         amount = request.data.get('amount', None)
-        
-#         success, error_msg, data = True, None, {}
 
-#         if (not amount) or (amount <= 0):
-#             success = False
-#             error_msg = "Invalid amount."
-            
-#         if success:
-#             wallet = request.user.get_wallet()
+@api_view(['GET','PUT'])   
+def deduct_amount(request,pk):
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer(qs)
+        if qs.add_amount > qs.deduct_amount:
+            qs.add_amount = qs.add_amount - qs.deduct_amount
+            qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+            qs.save()
+        elif qs.win_amount > qs.deduct_amount:
+            qs.win_amount = qs.win_amount - qs.deduct_amount
+            qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+            qs.save()
+        else:
+            return Response({status : "Not have enough balance"})
 
-#             if not wallet:
-#                 success = False
-#                 error_msg = "Wallet does not exist for user."
-                
-#         if success:
-#             with transaction.atomic():
-#                 wallet.deposit(amount)
-                
-#             data = walletserializer(wallet).data
-            
-#         return custom_response_renderer(
-#             data=data,
-#             error_msg=error_msg,
-#             status=success,
-#             status_code=status.HTTP_200_OK if success else
-#             status.HTTP_400_BAD_REQUEST
-#         )
-
-# from cart.models import Wallet  
-# wallet = User.wallet_set.create()
-
-# with transaction.atomic():
-#     # We need to lock the wallet first so that we're sure
-#     # that nobody modifies the wallet at the same time 
-#     # we're modifying it.
-#     wallet = Wallet.select_for_update().get(pk=wallet.id)
-#     wallet.deposit(100)  # amount
-    
-    
-# with transaction.atomic():
-#     # We need to lock the wallet first so that we're sure
-#     # that nobody modifies the wallet at the same time 
-#     # we're modifying it.
-#     wallet = Wallet.select_for_update().get(pk=wallet.id)
-#     wallet.withdraw(100)  
-
-# # @api_view(['GET','PUT'])
-# # def update_profile(request,pk):
-# #     snippet = Wallet.objects.get(pk=pk)
-# #     if request.method == 'GET':
-# #         serializer = walletserializer(snippet)
-# #         return Response(serializer.data)
-    
-# #     elif request.method == 'PUT':
-# #         serializer = walletserializer(snippet, data=request.data)
-# #         if serializer.is_valid():
-# #             serializer.save()
-# #             total_amount = request.data['total_amount']
-# #             add_amount = request.data['add_amount']
-# #             win_amount = request.data['win_amount']
-# #             deduct_amount = request.data['deduct_amount']
-# #             if add_amount > 0 or win_amount > 0:
-# #                 total_amount = add_amount + win_amount
-                
-# #             return Response(serializer.data)
-# #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=200)
