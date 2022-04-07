@@ -13,6 +13,8 @@ from django.core.files.base import ContentFile
 BASE_DIR = Path(__file__).resolve().parent.parent
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
+from django.templatetags.static import static
+import pandas as pd
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         path = os.path.join(BASE_DIR, 'static/images')
         dir_list = os.listdir(path)
         random_logo = random.choice(dir_list)
-       
+
         if self.Meta.model.objects.filter(**validated_data).exists():
             instance = self.Meta.model.objects.filter(**validated_data).last()          
             instance.otp = str(random.randint(1000 , 9999))
@@ -42,12 +44,12 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.save()
         return instance
 
+
 class VerifyOTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['mobile', 'otp']
-        read_only_fields = ['mobile']
-
+        fields = ['otp']
+        # read_only_fields = ['mobile']
 
 
 class UserProfileChangeSerializer(serializers.ModelSerializer):

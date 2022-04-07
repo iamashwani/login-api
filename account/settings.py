@@ -25,6 +25,7 @@ SECRET_KEY = 'django-insecure-ztja6%f-w(cfoy@$ovr-d^j9)nru!-1^+0b+!o)@%_1pvnxs^-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ['52.66.212.166']
 
 
@@ -78,12 +79,6 @@ WSGI_APPLICATION = 'account.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
@@ -128,19 +123,28 @@ STATICFILES_DIRS = [STATIC_DIR]
 # CURRENT_PATH = os.path.abspath(os.path.dirname(__file__).encode(0).decode('utf-8'))
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images',)
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'myproject',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 MEDIA_URL = '/images/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/images/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
-
-MEDIA_ROOT = BASE_DIR /'static/images'
+# STATIC_URL = '/static/'
+# MEDIA_URL = '/images/'
+#
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static'
+# ]
+#
+# MEDIA_ROOT = BASE_DIR /'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_KEY = "ybUL2EOKQt7PNJr95IglVhksndzjXiY8fMW40HvSFu6oeTwmxqfGtYVk4T1Ol0m5zyCeaQJSUv6DHjoB"
 
