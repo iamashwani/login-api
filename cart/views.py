@@ -110,14 +110,27 @@ def get_wallet(request, pk):
     
     return Response({"Something went wrong. Please try again later."}, status=404)
 
-@api_view(['GET','PUT'])   
-def add_money(request,pk):
-    qs = Wallet.objects.get(pk=pk)
-    if request.method == 'GET':
-        serializer = walletserializer(qs)
-        qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
-        qs.save()
+# @api_view(['GET','PUT'])   
+# def add_money(request,pk):
+#     qs = Wallet.objects.get(pk=pk)
+#     if request.method == 'GET':
+#         serializer = walletserializer(qs)
+#         qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+#         qs.save()
+#         return Response(serializer.data, status=200)
+class addmoneyViewSet(APIView):
+    serializer_class = walletserializer
+    permission_classes = (AllowAny,)
+    http_method_names = ['get',]
+    def queryset(self,pk):
+        # task_pk = dailyaskist(self.category)
+        # return Task.objects.filter(pk=task_pk)
+        get_queryset = Wallet.objects.filter(pk=pk)
+        serializer = walletserializer(self.get_queryset)
+        get_queryset.total_amount = get_queryset.total_amount + get_queryset.add_amount + get_queryset.win_amount
+        get_queryset.save()
         return Response(serializer.data, status=200)
+
 
 
 @api_view(['GET','PUT'])   
