@@ -44,9 +44,9 @@ class RegistrationAPIView(APIView):
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile, otp)
-                return JsonResponse(content, status=status.HTTP_201_CREATED,safe=False)
+                return Response(content, status=status.HTTP_201_CREATED)
             else:
-                return JsonResponse({"Error": "Login in Failed"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"Error": "Login in Failed"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer = self.serializer_class(data=request.data)
             mobile = request.data['mobile']
@@ -59,9 +59,9 @@ class RegistrationAPIView(APIView):
                 wallet = 10
                 wall = Wallet.objects.create(user=instance,total_amount=wallet)
                 send_otp(mobile, otp)
-                return JsonResponse(content, status=status.HTTP_201_CREATED, safe=False)
+                return Response(content, status=status.HTTP_201_CREATED)
             else:
-                return JsonResponse({"Error": "Sign Up Failed"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"Error": "Sign Up Failed"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyOTPView(APIView):
@@ -81,9 +81,9 @@ class VerifyOTPView(APIView):
                 old = old.first()
                 otp = old.otp
                 if str(otp) == str(otp_sent):
-                    return JsonResponse({'status': True,'detail': 'OTP is correct'},safe=False)
+                    return Response({'status': True,'detail': 'OTP is correct'})
                 else:
-                    return JsonResponse({'status': False,'detail': 'OTP incorrect, please try again'})
+                    return Response({'status': False,'detail': 'OTP incorrect, please try again'})
 
 
 @api_view(['GET'])
@@ -99,13 +99,13 @@ def Update_Profile(request,pk):
     snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = UserProfileChangeSerializer(snippet)
-        return JsonResponse(serializer.data)
+        return Response(serializer.data)
     elif request.method == 'POST':
         serializer = UserProfileChangeSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data,status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -116,14 +116,3 @@ def get_wallet(request, pk):
         return JsonResponse(serializer.data, status=200)
     return JsonResponse({"Something went wrong. Please try again later."}, status=404)
 
-
-@api_view(['GET','PUT'])
-def add_money(request,pk):
-    # import pdb
-    # pdb.set_trace()
-    qs = Wallet.objects.get(pk=pk)
-    if request.method == 'GET':
-        serializer = walletserializer(qs)
-        qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
-        qs.save()
-        return JsonResponse(serializer.data, status=200)
