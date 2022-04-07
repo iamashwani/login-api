@@ -51,7 +51,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class VerifyOTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['otp', 'id']
+        fields = ['otp','mobile']
         # read_only_fields = ['mobile']
 
 
