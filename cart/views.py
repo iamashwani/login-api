@@ -40,7 +40,8 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'mobile': instance.mobile, 'otp': instance.otp}
+                content = {'id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
+                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile, otp)
