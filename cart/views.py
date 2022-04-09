@@ -9,32 +9,30 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 import http.client
 import requests
-
-def send_otp(mobile, otp):
-    url = http.client.HTTPConnection("2factor.in")
-    authkey = settings.AUTH_KEY
-    payload = ""
-    headers = {
-        'cache-control': "no-cache"
-    }
-    url.request("GET", "/API/V1/"+str(authkey)+"/SMS/"+str(mobile)+"/"+str(otp),payload, headers)
-    res = url.getresponse()
-    data = res.read()
-    print(data.decode("utf-8"))
-# import urllib.request as urllib2
-# import http.cookiejar as cookielib
+import urllib.request as urllib2
+import http.cookiejar as cookielib
 # def send_otp(mobile, otp):
+#     url = http.client.HTTPConnection("amazesms.in")
 #     authkey = settings.AUTH_KEY
-#     url = "http://amazesms.in/api/pushsms?user="+mobile+"&authkey="+authkey+"&sender=Your_Sender_ID&mobile="+mobile+"&text="+otp+"&entityid=1201159141994639894&templateid=1507164906024124641&rpt=1"
 #     payload = ""
 #     headers = {
 #         'cache-control': "no-cache"
 #     }
-#     req=urllib2.Request(url,payload, headers)
-#     res = urllib2.urlopen(req)
+#     url.request("GET","/api/pushsms?user=hogotp&authkey="+authkey+"&sender=AMTSHR&mobile="+mobile+"&text="+otp+"&entityid=1201159141994639894&templateid=1507164906024124641&rpt=1",payload, headers)
+#     res = url.getresponse()
 #     data = res.read()
 #     print(data.decode("utf-8"))
-
+import urllib
+from urllib.parse import urlparse
+def send_otp(mobile, otp):
+    
+    authkey = settings.AUTH_KEY
+    url = "http://amazesms.in/api/pushsms?user=hogotp&authkey="+authkey+"&sender=AMTSHR&mobile="+mobile+"&text=Hi%20%2C%20Your%20OTP%20is%20"+otp+".%20Valid%20for%203min.%20AMTSHR&entityid=1201159141994639834&templateid=1507164906024124641&rpt=1"
+    
+    req = urllib2.Request(url)
+    page = urllib2.urlopen(req)
+    data = page.read()
+    print(data.decode("utf-8"))
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = ProfileSerializer
@@ -153,7 +151,7 @@ def deduct_amount(request,pk):
         serializer = walletserializer_deduct(qs)
         if qs.full_win_amount > qs.deduct_amount:
             qs.full_win_amount = qs.full_win_amount - qs.deduct_amount
-            qs.total_amount = qs.total_amount - qs.full_win_amount
+            qs.total_amount = qs.total_amount - qs.deduct_amount
             qs.save()
             return Response(serializer.data, status=200)
 

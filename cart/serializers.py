@@ -22,11 +22,11 @@ class ProfileSerializer(serializers.ModelSerializer):
        
         if self.Meta.model.objects.filter(**validated_data).exists():
             instance = self.Meta.model.objects.filter(**validated_data).last()          
-            instance.otp = str(random.randint(1000 , 9999))
+            instance.otp = str(random.randint(100000 , 999999))
             instance.save()
         else:
             instance = self.Meta.model(**validated_data)
-            instance.otp = str(random.randint(1000 , 9999))
+            instance.otp = str(random.randint(100000 , 999999))
             instance.username = res
             instance.name = instance.mobile
             instance.logo = random_logo
