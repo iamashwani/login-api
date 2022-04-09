@@ -5,21 +5,22 @@ import os
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 from django.conf import settings
-
+import base64
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['mobile','name','username','logo']
-        read_only_fields = ['name','username','logo']
+        fields = ["id",'mobile','name','username','logo']
+        read_only_fields = ['id','name','username','logo']
 
     def create(self, validated_data):
+      
         instance = self.Meta.model(**validated_data)      
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords,k = 6)))
         path = os.path.join(BASE_DIR, 'static/images')
         dir_list = os.listdir(path)
         random_logo = random.choice(dir_list)
-       
+        
         if self.Meta.model.objects.filter(**validated_data).exists():
             instance = self.Meta.model.objects.filter(**validated_data).last()          
             instance.otp = str(random.randint(100000 , 999999))
@@ -30,7 +31,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.username = res
             instance.name = instance.mobile
             instance.logo = random_logo
-            instance.profile_id = random_logo
+            instance.profile_id = res
             instance.save()
         return instance
 

@@ -7,32 +7,29 @@ from .serializers import ProfileSerializer,VerifyOTPSerializer,UserProfileChange
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
-import http.client
-import requests
 import urllib.request as urllib2
-import http.cookiejar as cookielib
+import http.client
 # def send_otp(mobile, otp):
-#     url = http.client.HTTPConnection("amazesms.in")
+    
 #     authkey = settings.AUTH_KEY
-#     payload = ""
-#     headers = {
-#         'cache-control': "no-cache"
-#     }
-#     url.request("GET","/api/pushsms?user=hogotp&authkey="+authkey+"&sender=AMTSHR&mobile="+mobile+"&text="+otp+"&entityid=1201159141994639894&templateid=1507164906024124641&rpt=1",payload, headers)
-#     res = url.getresponse()
-#     data = res.read()
+#     url = "http://amazesms.in/api/pushsms?user=hogotp&authkey="+authkey+"&sender=AMTSHR&mobile="+mobile+"&text=Hi%20%2C%20Your%20OTP%20is%20"+otp+".%20Valid%20for%203min.%20AMTSHR&entityid=1201159141994639834&templateid=1507164906024124641&rpt=1"
+    
+#     req = urllib2.Request(url)
+#     page = urllib2.urlopen(req)
+#     data = page.read()
 #     print(data.decode("utf-8"))
-import urllib
-from urllib.parse import urlparse
 def send_otp(mobile, otp):
-    
+    url = http.client.HTTPConnection("2factor.in")
     authkey = settings.AUTH_KEY
-    url = "http://amazesms.in/api/pushsms?user=hogotp&authkey="+authkey+"&sender=AMTSHR&mobile="+mobile+"&text=Hi%20%2C%20Your%20OTP%20is%20"+otp+".%20Valid%20for%203min.%20AMTSHR&entityid=1201159141994639834&templateid=1507164906024124641&rpt=1"
-    
-    req = urllib2.Request(url)
-    page = urllib2.urlopen(req)
-    data = page.read()
+    payload = ""
+    headers = {
+        'cache-control': "no-cache"
+    }
+    url.request("GET", "/API/V1/"+str(authkey)+"/SMS/"+str(mobile)+"/"+str(otp),payload, headers)
+    res = url.getresponse()
+    data = res.read()
     print(data.decode("utf-8"))
+ 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = ProfileSerializer
@@ -45,8 +42,8 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'mobile': instance.mobile, 'otp': instance.otp,'name': instance.name,
-                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
+                content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp,'name': instance.name,
+                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id,'id' : instance.id}
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile, otp)
@@ -58,7 +55,7 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
+                content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
                            'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
@@ -84,7 +81,6 @@ class VerifyOTPView(APIView):
             if old is not None:
                 old = old.first()
                 otp = old.otp
-                #old = User.objects.filter(id=user_mobile.id).update(otp = otp_sent)
                 if User.objects.filter(id=user_id.id).update(otp = otp_sent):
 
                     return Response({'status': True,'detail': 'OTP is correct'})
@@ -158,4 +154,4 @@ def deduct_amount(request,pk):
         else:
             return Response({"Not have enough balance"})
 
-        #return Response(serializer.data, status=200)
+        
