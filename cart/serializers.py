@@ -20,8 +20,8 @@ import pandas as pd
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'mobile', 'name', 'username', 'logo']
-        read_only_fields = ['id','name', 'username', 'logo']
+        fields = ['id', 'mobile', 'name', 'username', 'profile_url','profile_id']
+        read_only_fields = ['id','name', 'username', 'profile_url','profile_id']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
@@ -40,8 +40,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.otp = str(random.randint(1000, 9999))
             instance.username = res
             instance.name = instance.mobile
-            instance.logo = random_logo
-            instance.profile_id = random_logo
+            instance.profile_url = random_logo
             instance.id = instance.id
 
             instance.save()
@@ -55,10 +54,16 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
         # read_only_fields = ['mobile']
 
 
+class UserGetProfileChangeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name' ,'username', 'profile_url', 'profile_id']
+
+
 class UserProfileChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name', 'username', 'logo']
+        fields = ['name','username', 'profile_url','profile_id']
 
 
 class walletserializer(serializers.ModelSerializer):

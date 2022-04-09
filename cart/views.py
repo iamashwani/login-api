@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 from .models import User,Wallet
-from .serializers import ProfileSerializer, VerifyOTPSerializer, UserProfileChangeSerializer,walletserializer
+from .serializers import ProfileSerializer, VerifyOTPSerializer, UserProfileChangeSerializer,walletserializer,UserGetProfileChangeSerializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 import requests
@@ -41,7 +41,7 @@ class RegistrationAPIView(APIView):
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
                 content = {'id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
-                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
+                           'username': instance.username, 'profile_url': instance.profile_url, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile, otp)
@@ -54,7 +54,7 @@ class RegistrationAPIView(APIView):
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
                 content = {'id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
-                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
+                           'username': instance.username, 'profile_url': instance.profile_url, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
                 wallet = 10
@@ -91,7 +91,7 @@ class VerifyOTPView(APIView):
 def Get_Profile(request, pk):
     snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
-        serializer = UserProfileChangeSerializer(snippet)
+        serializer = UserGetProfileChangeSerializer(snippet)
         return JsonResponse(serializer.data, safe=False)
 
 
