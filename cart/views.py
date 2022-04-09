@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.conf import settings
 from .models import User, Wallet
-from .serializers import ProfileSerializer,VerifyOTPSerializer,UserProfileChangeSerializer,walletserializer
+from .serializers import ProfileSerializer,VerifyOTPSerializer,UserProfileChangeSerializer,walletserializer,walletserializer_add,walletserializer_deduct
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 import http.client
+import requests
 
 def send_otp(mobile, otp):
     url = http.client.HTTPConnection("2factor.in")
@@ -20,6 +21,19 @@ def send_otp(mobile, otp):
     res = url.getresponse()
     data = res.read()
     print(data.decode("utf-8"))
+# import urllib.request as urllib2
+# import http.cookiejar as cookielib
+# def send_otp(mobile, otp):
+#     authkey = settings.AUTH_KEY
+#     url = "http://amazesms.in/api/pushsms?user="+mobile+"&authkey="+authkey+"&sender=Your_Sender_ID&mobile="+mobile+"&text="+otp+"&entityid=1201159141994639894&templateid=1507164906024124641&rpt=1"
+#     payload = ""
+#     headers = {
+#         'cache-control': "no-cache"
+#     }
+#     req=urllib2.Request(url,payload, headers)
+#     res = urllib2.urlopen(req)
+#     data = res.read()
+#     print(data.decode("utf-8"))
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
@@ -33,7 +47,8 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'mobile': instance.mobile, 'otp': instance.otp}
+                content = {'mobile': instance.mobile, 'otp': instance.otp,'name': instance.name,
+                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile, otp)
@@ -71,7 +86,7 @@ class VerifyOTPView(APIView):
             if old is not None:
                 old = old.first()
                 otp = old.otp
-                # old = User.objects.filter(id=user_mobile.id).update(otp = otp_sent)
+                #old = User.objects.filter(id=user_mobile.id).update(otp = otp_sent)
                 if User.objects.filter(id=user_id.id).update(otp = otp_sent):
 
                     return Response({'status': True,'detail': 'OTP is correct'})
@@ -109,44 +124,40 @@ def get_wallet(request, pk):
         return Response(serializer.data, status=200)
     
     return Response({"Something went wrong. Please try again later."}, status=404)
-
-# @api_view(['GET','PUT'])   
-# def add_money(request,pk):
-#     qs = Wallet.objects.get(pk=pk)
-#     if request.method == 'GET':
-#         serializer = walletserializer(qs)
-#         qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
-#         qs.save()
-#         return Response(serializer.data, status=200)
-class addmoneyViewSet(APIView):
-    serializer_class = walletserializer
-    permission_classes = (AllowAny,)
-    http_method_names = ['get',]
-    def queryset(self,pk):
-        # task_pk = dailyaskist(self.category)
-        # return Task.objects.filter(pk=task_pk)
-        get_queryset = Wallet.objects.filter(pk=pk)
-        serializer = walletserializer(self.get_queryset)
-        get_queryset.total_amount = get_queryset.total_amount + get_queryset.add_amount + get_queryset.win_amount
-        get_queryset.save()
-        return Response(serializer.data, status=200)
-
-
-
-@api_view(['GET','PUT'])   
-def deduct_amount(request,pk):
+from django.db.models import F
+@api_view(['GET'])   
+def total_money(request,pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer(qs)
-        if qs.add_amount > qs.deduct_amount:
-            qs.add_amount = qs.add_amount - qs.deduct_amount
-            qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
-            qs.save()
-        elif qs.win_amount > qs.deduct_amount:
-            qs.win_amount = qs.win_amount - qs.deduct_amount
-            qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
-            qs.save()
-        else:
-            return Response({status : "Not have enough balance"})
-
+        qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+        qs.save()
         return Response(serializer.data, status=200)
+
+@api_view(['GET'])   
+def full_money(request,pk):
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer_add(qs)
+        qs.full_add_amount = qs.full_add_amount + qs.add_amount
+        qs.full_win_amount = qs.full_win_amount + qs.win_amount
+        qs.save()
+        return Response(serializer.data, status=200)
+
+
+@api_view(['GET'])   
+def deduct_amount(request,pk):
+   
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer_deduct(qs)
+        if qs.full_win_amount > qs.deduct_amount:
+            qs.full_win_amount = qs.full_win_amount - qs.deduct_amount
+            qs.total_amount = qs.total_amount - qs.full_win_amount
+            qs.save()
+            return Response(serializer.data, status=200)
+
+        else:
+            return Response({"Not have enough balance"})
+
+        #return Response(serializer.data, status=200)

@@ -49,5 +49,15 @@ class walletserializer(serializers.ModelSerializer):
         model = Wallet
         fields = ['user','total_amount','add_amount','win_amount','deduct_amount']
 
+class walletserializer_add(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['user','full_add_amount','full_win_amount']
+
+class walletserializer_deduct(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['user','total_amount','full_add_amount','full_win_amount','deduct_amount']
+
 
 

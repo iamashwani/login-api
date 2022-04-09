@@ -15,6 +15,15 @@ class Wallet(models.Model):
     # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(_('Total amount'), max_digits=10, decimal_places=2, default=10)
     add_amount = models.DecimalField(_('Add amount'), max_digits=10, decimal_places=2, default=0)
-    win_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
-    deduct_amount = models.DecimalField( max_digits=10, decimal_places=2, default=0)
+    full_add_amount = models.DecimalField(_('Full Add amount'), max_digits=10, decimal_places=2, default=0)
+    win_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    full_win_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    deduct_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
+    # def calculate_amt(self):
+    #     return self.total_amount + self.add_amount + self.win_amount
+
+    # def save(self, *args, **kwargs):
+    #     self.total_amount=self.calculate_amt()
+    #     super().save(*args, **kwargs)
+
