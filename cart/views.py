@@ -13,6 +13,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view
 import http.client
 from django.http import HttpResponse, JsonResponse
+from decimal import Decimal
+from django.db.models import Sum
+from django.db.models import Q
 
 
 def send_otp(mobile, otp):
@@ -115,4 +118,39 @@ def get_wallet(request, pk):
         serializer = walletserializer(qs)
         return JsonResponse(serializer.data, status=200)
     return JsonResponse({"Something went wrong. Please try again later."}, status=404)
+
+
+@api_view(['GET','PUT'])
+def add_money(request,pk):
+    # import pdb
+    # pdb.set_trace()
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer(qs)
+        # # data = []
+        # # for x in qs.iterable():
+        # #     x.add_amount = qs['add_amount']
+        # #     x.win_amount = qs['win_amount']
+        # #     x.append(data)
+        # # qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+        # # qs.save()
+        # total = 0
+        # message = []
+        # for wallet in qs:
+        #     message.append(str(wallet['total_amount']) + ' ' + str(wallet['add_amount']))
+        #     value = str(wallet['add_amount'])
+        #     total += float(value)
+        # message.append('Total Balance: ' + str(total))
+        return Response(serializer.data, status=200)
+
+    # def getWalletAmount(user):
+    #     transaction_data = TransactionDetails.objects.filter(user=user)
+    #     ant_sent = transaction_data.aggregate(Sum('amountSent')).get('amountSent__sum', 0.00)
+    #     ant_receive = transaction_data.aggregate(Sum('amountReceived')).get('amountReceived__sum', 0.00)
+    #     wallet_balance = 0
+    #     if ant_sent is not None and ant_receive is not None:
+    #         wallet_balance = ant_receive - ant_sent
+    #     elif ant_receive is not None and ant_sent is None:
+    #         wallet_balance = ant_receive
+    #     return float(wallet_balance)
 
