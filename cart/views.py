@@ -40,7 +40,7 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
+                content = {'Status':True,'Message':'Success','id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
                            'username': instance.username, 'profile_url': instance.profile_url, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
@@ -53,7 +53,7 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
+                content = {'Status':True,'Message':'Success','id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
                            'username': instance.username, 'profile_url': instance.profile_url, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
                 otp = instance.otp
@@ -82,9 +82,9 @@ class VerifyOTPView(APIView):
                 old = old.first()
                 otp = old.otp
                 if str(otp) == str(otp_sent):
-                    return Response({'status': True,'detail': 'OTP is correct'})
+                    return Response({'Status': True, 'detail': 'OTP is correct'})
                 else:
-                    return Response({'status': False,'detail': 'OTP incorrect, please try again'})
+                    return Response({'Status': False,'detail': 'OTP incorrect, please try again'})
 
 
 @api_view(['GET'])
@@ -92,7 +92,7 @@ def Get_Profile(request, pk):
     snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = UserGetProfileChangeSerializer(snippet)
-        return JsonResponse(serializer.data, safe=False)
+        return JsonResponse(serializer.data)
 
 
 @api_view(['GET', 'POST'])
@@ -105,7 +105,7 @@ def Update_Profile(request,pk):
         serializer = UserProfileChangeSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.data,{'Status':True,'Message':'Success',})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
