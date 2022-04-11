@@ -63,7 +63,7 @@ class UserGetProfileChangeSerializer(serializers.ModelSerializer):
 class UserProfileChangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['name','username', 'profile_url','profile_id']
+        fields = ['name','username', 'profile','profile_id']
 
 
 class walletserializer(serializers.ModelSerializer):
