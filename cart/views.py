@@ -119,7 +119,6 @@ def Get_Profile(request, pk):
 
 
 @api_view(['GET', 'POST'])
-# @permission_classes(IsAuthenticated,)
 def Update_Profile(request,pk):
     snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
@@ -129,8 +128,8 @@ def Update_Profile(request,pk):
         serializer = UserProfileChangeSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse({"status": "ok", "data": serializer.data}, status=status.HTTP_201_CREATED,safe=False)
-        return JsonResponse({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'status': 'ok','data':serializer.data}, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
