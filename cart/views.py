@@ -7,7 +7,7 @@ from .models import User,Wallet
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
     walletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
-    walletserializer_add,GetProfileResponceSerializer
+    walletserializer_add,GetResponceSerializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 import requests
@@ -18,8 +18,9 @@ import http.client
 from django.http import HttpResponse, JsonResponse
 import json
 from rest_framework.views import exception_handler
+from rest_framework.exceptions import NotFound
 
-#
+
 def api_500_handler(exception, context):
     response = exception_handler(exception, context)
     try:
@@ -91,22 +92,22 @@ class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = VerifyOTPSerializer
 
-    def post(self, request,id):
-        # import pdb
-        # pdb.set_trace()
-        serializer = VerifyOTPSerializer(data=request.data)
-        # mobile = request.data['mobile']
-        otp_sent = request.data['otp']
-        otp = User.objects.get(pk=id)
-        if otp_sent:
-            old = User.objects.filter(id=otp.id)
-            if old is not None:
-                old = old.first()
-                otp = old.otp
-                if str(otp) == str(otp_sent):
-                    return JsonResponse({'status': True,'detail': 'OTP is correct'})
-                else:
-                    return JsonResponse({'status': False,'detail': 'OTP incorrect, please try again'})
+    def post(self, request, id):
+        try:
+            serializer = VerifyOTPSerializer(data=request.data)
+            otp_sent = request.data['otp']
+            otp = User.objects.get(pk=id)
+            if otp_sent:
+                old = User.objects.filter(id=otp.id)
+                if old is not None:
+                    old = old.first()
+                    otp = old.otp
+                    if str(otp) == str(otp_sent):
+                        return JsonResponse({'status': True,'message': 'OTP is correct'})
+                    else:
+                        return JsonResponse({'status': False,'message': 'OTP incorrect, please try again'})
+        except:
+            raise NotFound('Message')
 
 
 @api_view(['GET'])
@@ -114,8 +115,10 @@ def Get_Profile(request, pk):
     snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = UserGetProfileChangeSerializer(snippet)
-        return JsonResponse({"status": True, "message": "success", "data": serializer.data}, status=status.HTTP_200_OK, safe=False)
-
+        json_data = serializer.data
+        x = GetResponceSerializer(json_data)
+        x = {**x.data, **json_data}
+        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
 
 
 @api_view(['GET', 'POST'])
@@ -128,7 +131,10 @@ def Update_Profile(request,pk):
         serializer = UserProfileChangeSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse({'status': 'True',"message": "success", 'data':serializer.data}, status=status.HTTP_200_OK)
+            json_data = serializer.data
+            x = GetResponceSerializer(json_data)
+            x = {**x.data, **json_data}
+            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
         else:
             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -138,7 +144,10 @@ def get_wallet(request, pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer(qs)
-        return JsonResponse({"status": True, "message": "success", "data": serializer.data}, status=200, safe=False)
+        json_data = serializer.data
+        x = GetResponceSerializer(json_data)
+        x = {**x.data, **json_data}
+        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
     else:
         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later."}, status=404)
 
@@ -150,7 +159,14 @@ def get_wallet(request, pk):
 #         serializer = walletserializer(qs)
 #         qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
 #         qs.save()
-#         return JsonResponse({"status": "success", "data":serializer.data}, status=True)
+#         json_data = serializer.data
+#         x = GetProfileResponceSerializer(json_data)
+#         x = {**x.data, **json_data}
+#         return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+#     else:
+#         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
+#                             status=status.HTTP_400_BAD_REQUEST)
+#
 #
 #
 # @api_view(['GET'])
@@ -158,22 +174,29 @@ def get_wallet(request, pk):
 #     qs = Wallet.objects.get(pk=pk)
 #     if request.method == 'GET':
 #         serializer = walletserializer_add(qs)
-#         qs.full_add_amount = qs.full_add_amount + qs.add_amount
-#         qs.full_win_amount = qs.full_win_amount + qs.win_amount
+#         qs.deposit_cash = qs.deposit_cash + qs.add_amount
+#         qs.winning_cash = qs.winning_cash + qs.win_amount
 #         qs.save()
-#         return JsonResponse(serializer.data,status=status.HTTP_200_OK, safe=False)
-#     return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         json_data = serializer.data
+#         x = GetProfileResponceSerializer(json_data)
+#         x = {**x.data, **json_data}
+#         return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+#     else:
+#         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
 #
 #
 # @api_view(['GET'])
-# def deduct_amount(request, pk):
+# def withdraw_amount(request, pk):
 #     qs = Wallet.objects.get(pk=pk)
 #     if request.method == 'GET':
 #         serializer = walletserializer_deduct(qs)
-#         if qs.full_win_amount > qs.deduct_amount:
-#             qs.full_win_amount = qs.full_win_amount - qs.deduct_amount
-#             qs.total_amount = qs.total_amount - qs.deduct_amount
+#         if qs.winning_cash > qs.withdraw_amount:
+#             qs.winning_cash = qs.winning_cash - qs.withdraw_amount
+#             qs.total_amount = qs.total_amount - qs.withdraw_amount
 #             qs.save()
-#             return Response(serializer.data, status=200)
+#             json_data = serializer.data
+#             x = GetProfileResponceSerializer(json_data)
+#             x = {**x.data, **json_data}
+#             return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
 #         else:
-#             return Response({"Not have enough balance"})
+#             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)

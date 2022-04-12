@@ -7,19 +7,17 @@ from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = [
 
     path('register/', RegistrationAPIView.as_view()),
-    path('verify/<int:id>', VerifyOTPView.as_view()),
+    path('verify/<int:id>/', VerifyOTPView.as_view()),
     path('get_profile/<int:pk>/', views.Get_Profile, name='get_profile'),
     path('update_profile/<int:pk>/', views.Update_Profile, name='update_profile'),
-    path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
-    # path('add_money/<int:pk>', views.add_money, name='add_money'),
-    # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
-    # path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
+    path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
+
     # path('get_total_money/<int:pk>/', views.total_money, name='get_total_money'),
-    # path('full_money/<int:pk>/', views.full_money, name='full_add_money'),
-    # # path('full_win_money/<int:pk>',views.full_win_money, name='full_win_money'),
-    # path('deduct_amount/<int:pk>/', views.deduct_amount, name='deduct_amount')
+    # path('full_money/<int:pk>/', views.full_money, name='full_money'),
+    # path('withdraw_amount/<int:pk>/', views.withdraw_amount, name='withdraw_amount')
+    # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 
-handler404 = 'cart.views.api_500_handler'
+# handler404 = 'cart.views.api_500_handler'

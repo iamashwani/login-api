@@ -50,7 +50,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class VerifyOTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['otp','mobile']
+        fields = ['otp']
         # read_only_fields = ['mobile']
 
 
@@ -69,31 +69,30 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
 class walletserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user', 'total_amount', 'add_amount', 'win_amount', 'deduct_amount']
+        fields = ['user','total_amount','deposit_cash','winning_cash','withdraw_amount']
 
 
 class walletserializer_add(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','total_add_amount','total_win_amount']
+        fields = ['user','deposit_cash','winning_cash']
 
 
 class walletserializer_deduct(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','total_amount','total_add_amount','total_win_amount','deduct_amount']
+        fields = ['user','total_amount','deposit_cash','winning_cash','withdraw_amount']
 
 
-class GetProfileResponceSerializer(serializers.Serializer):
-    Status = serializers.SerializerMethodField()
-    Message = serializers.SerializerMethodField()
+class GetResponceSerializer(serializers.Serializer):
+    status = serializers.SerializerMethodField()
+    message = serializers.SerializerMethodField()
 
+    def get_status(self, obj):
+        return True
 
-    def get_Status(self, obj):
-        return "1"
-
-    def get_Message(self, obj):
-        return "Success"
+    def get_message(self, obj):
+        return "success"
 
 
 

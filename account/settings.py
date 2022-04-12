@@ -160,9 +160,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
+    "NON_FIELD_ERRORS_KEY": "error",
+    "EXCEPTION_HANDLER": "login-api.cart.exceptions.core_exception_handler",
+   # 'EXCEPTION_HANDLER': [
+   #     'login-api.cart.exceptions.custom_exception_handler',
+   #     'rest_framework.views.exception_handler'
+   # ]
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     # ]
+    # 'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
 
 
     # 'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -206,3 +213,8 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+# ses_id = request.session.session_key
+# token = get_token(request)
+# cookies = {'csrftoken': token, 'sessionid': ses_id}
+# response = requests.get('http://127.0.0.1:8000/api/api_product/product_types/', cookies=cookies)
