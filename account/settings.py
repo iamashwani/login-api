@@ -122,26 +122,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 
-STATIC_URL = '/static/'
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [STATIC_DIR]
+# STATIC_URL = '/static/'
+# STATIC_DIR = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [STATIC_DIR]
 
 # CURRENT_PATH = os.path.abspath(os.path.dirname(__file__).encode(0).decode('utf-8'))
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images',)
-
-MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images/profile',)
+# MEDIA_URL = '/images/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
+STATIC_DIR = os.path.join(BASE_DIR, 'static',)
+STATICFILES_DIRS = [STATIC_DIR]
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
-
-MEDIA_ROOT = BASE_DIR /'static/images'
+# MEDIA_ROOT = BASE_DIR /'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_KEY = "92lYpsEmFj2C2"
 
