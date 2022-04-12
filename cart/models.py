@@ -18,6 +18,6 @@ class Wallet(models.Model):
     deposit_cash = models.DecimalField(_('Full Add amount'), max_digits=10, decimal_places=2, default=0)
     win_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     winning_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    deduct_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)   
+    withdraw_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)   
   
 

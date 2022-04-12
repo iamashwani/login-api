@@ -147,14 +147,14 @@ def full_money(request,pk):
 
 
 @api_view(['GET'])   
-def deduct_amount(request,pk):
+def withdraw_amount(request,pk):
    
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer_deduct(qs)
-        if qs.winning_cash > qs.deduct_amount:
-            qs.winning_cash = qs.winning_cash - qs.deduct_amount
-            qs.total_amount = qs.total_amount - qs.deduct_amount
+        if qs.winning_cash > qs.withdraw_amount:
+            qs.winning_cash = qs.winning_cash - qs.withdraw_amount
+            qs.total_amount = qs.total_amount - qs.withdraw_amount
             qs.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
