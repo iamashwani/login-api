@@ -31,7 +31,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.username = res
             instance.name = instance.mobile
             instance.logo = random_logo
-            instance.profile_id = res
+            
             instance.save()
         return instance
 
@@ -48,17 +48,17 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
 class walletserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','total_amount','add_amount','win_amount','deduct_amount']
+        fields = ['user','total_amount','deposit_cash','winning_cash','deduct_amount']
 
 class walletserializer_add(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','full_add_amount','full_win_amount']
+        fields = ['user','deposit_cash','winning_cash']
 
 class walletserializer_deduct(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','total_amount','full_add_amount','full_win_amount','deduct_amount']
+        fields = ['user','total_amount','deposit_cash','winning_cash','deduct_amount']
 
 
 

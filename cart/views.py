@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 import urllib.request as urllib2
 import http.client
+import os
 # def send_otp(mobile, otp):
     
 #     authkey = settings.AUTH_KEY
@@ -42,8 +43,10 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp,'name': instance.name,
-                           'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id,'id' : instance.id}
+                # old_name = str(instance.logo)
+                # new_name = "http://" + str(request.get_host()) + "/"+ str(instance.id)+".png"
+                # renamed_image = os.rename(old_name, new_name)
+                content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp,'name': instance.name,'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id,'id' : instance.id}
                 mobile = instance.mobile
                 otp = instance.otp
                 send_otp(mobile, otp)
@@ -54,7 +57,11 @@ class RegistrationAPIView(APIView):
             serializer = self.serializer_class(data=request.data)
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
-                instance = serializer.save()
+                # instance = serializer.save()
+                # old_name = str(instance.logo)
+                # new_name = str(request.get_host()) + "/"+ str(instance.id)+".png"
+                # renamed_image = os.rename(old_name, new_name)
+                # renamed_image.save()
                 content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
                            'username': instance.username, 'logo': instance.logo, 'profile_id': instance.profile_id}
                 mobile = instance.mobile
@@ -115,7 +122,7 @@ def get_wallet(request, pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer(qs)
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     return Response({"Something went wrong. Please try again later."}, status=404)
 from django.db.models import F
@@ -126,17 +133,17 @@ def total_money(request,pk):
         serializer = walletserializer(qs)
         qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
         qs.save()
-        return Response(serializer.data, status=200)
-
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response('')
 @api_view(['GET'])   
 def full_money(request,pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer_add(qs)
-        qs.full_add_amount = qs.full_add_amount + qs.add_amount
-        qs.full_win_amount = qs.full_win_amount + qs.win_amount
+        qs.deposit_cash = qs.deposit_cash + qs.add_amount
+        qs.winning_cash = qs.winning_cash + qs.win_amount
         qs.save()
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])   
@@ -145,11 +152,11 @@ def deduct_amount(request,pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer_deduct(qs)
-        if qs.full_win_amount > qs.deduct_amount:
-            qs.full_win_amount = qs.full_win_amount - qs.deduct_amount
+        if qs.winning_cash > qs.deduct_amount:
+            qs.winning_cash = qs.winning_cash - qs.deduct_amount
             qs.total_amount = qs.total_amount - qs.deduct_amount
             qs.save()
-            return Response(serializer.data, status=200)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         else:
             return Response({"Not have enough balance"})
