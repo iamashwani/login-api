@@ -6,6 +6,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 from django.conf import settings
 import base64
+# from django.core.files.storage import default_stroage
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -20,7 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         path = os.path.join(BASE_DIR, 'static/images')
         dir_list = os.listdir(path)
         random_logo = random.choice(dir_list)
-        
+
         if self.Meta.model.objects.filter(**validated_data).exists():
             instance = self.Meta.model.objects.filter(**validated_data).last()          
             instance.otp = str(random.randint(100000 , 999999))
@@ -31,7 +34,21 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.username = res
             instance.name = instance.mobile
             instance.logo = random_logo
-            instance.profile_url = res
+            # instance.profile_url = 
+            instance.save()
+
+           
+                
+            extension = random_logo.split(".")[-1]
+            ext2 = random_logo.replace(extension, "png")
+            og_filename = ext2.split('.')[0]
+            og_filename2 = ext2.replace(og_filename, str(instance.id))
+            # r = os.path.join('profile/', og_filename2)
+            # pat=default_stroage.save(r,ContentFileName())
+            # instance.profile_url = 'http://127.0.0.1:8000/'+ og_filename2
+            instance.profile_dp = og_filename2
+            r = os.path.join('profile/', instance.profile_url)
+            
             instance.save()
         return instance
 

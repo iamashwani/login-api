@@ -18,7 +18,7 @@ class User(models.Model):
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200)
     username = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to = "profile/" ,null=True, blank=True)
+    logo = models.ImageField(upload_to = "" ,null=True, blank=True)
     profile_dp = models.ImageField(upload_to = content_file_name, storage=OverwriteStorage(), null=True, blank=True)
     profile_url = models.CharField(max_length=200)
 
