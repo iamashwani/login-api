@@ -19,23 +19,21 @@ from django.http import HttpResponse, JsonResponse
 import json
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import ParseError
 
 
-def api_500_handler(exception, context):
-    response = exception_handler(exception, context)
-    try:
-        detail = response.data['detail']
-    except AttributeError:
-        detail = exception.message
-    response = HttpResponse(
-        json.dumps({'detail': detail}),
-        content_type="application/json", status=500
-    )
-    return response
+from rest_framework.exceptions import APIException
+
+class ProductCatalogExeption(APIException):
+    status_code = 404 #or whatever you want
+    default_detail = '{"status": False, "message": "Page not found, invalid url"}'
+    # default_detail["status"] = bool(False)
+    # data = json.dumps(default_detail)
+  #  response_json = default_detail.decode('utf-8')
+  #   json_object = json.loads(response_json)
+  #   print(json_object["status"])
 
 
-# def error_404_view(request,exception):
-#     return HttpResponse("invalid")
 
 
 def send_otp(mobile, otp):
@@ -107,27 +105,31 @@ class VerifyOTPView(APIView):
                     else:
                         return JsonResponse({'status': False,'message': 'OTP incorrect, please try again'})
         except:
-            raise NotFound('Message')
+            raise ProductCatalogExeption()
 
 
 @api_view(['GET'])
 def Get_Profile(request, pk):
-    snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
-        serializer = UserGetProfileChangeSerializer(snippet)
-        json_data = serializer.data
-        x = GetResponceSerializer(json_data)
-        x = {**x.data, **json_data}
-        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+        try:
+            snippet = User.objects.get(pk=pk)
+            serializer = UserGetProfileChangeSerializer(snippet)
+            json_data = serializer.data
+            x = GetResponceSerializer(json_data)
+            x = {**x.data, **json_data}
+            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+        except:
+            raise ProductCatalogExeption()
 
 
 @api_view(['GET', 'POST'])
 def Update_Profile(request,pk):
-    snippet = User.objects.get(pk=pk)
     if request.method == 'GET':
+        snippet = User.objects.get(pk=pk)
         serializer = UserProfileChangeSerializer(snippet)
         return Response(serializer.data)
     elif request.method == 'POST':
+        snippet = User.objects.get(pk=pk)
         serializer = UserProfileChangeSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
