@@ -9,8 +9,8 @@ import base64
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id",'mobile','name','username','logo','profile_dp']
-        read_only_fields = ['id','name','username','logo','profile_dp']
+        fields = ["id",'mobile','name','username','logo','profile_dp','profile_url']
+        read_only_fields = ['id','name','username','logo','profile_dp','profile_url']
 
     def create(self, validated_data):
       

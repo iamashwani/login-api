@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'cart',
     'rest_framework',
     'rest_framework_simplejwt',
+    
+    # 'django_cleanup.apps.CleanupConfig',
 ]
 
 
@@ -128,7 +130,7 @@ USE_TZ = True
 
 # CURRENT_PATH = os.path.abspath(os.path.dirname(__file__).encode(0).decode('utf-8'))
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images/profile',)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images',)
 # MEDIA_URL = '/images/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

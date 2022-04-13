@@ -43,9 +43,6 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                # old_name = str(instance.logo)
-                # new_name = "http://" + str(request.get_host()) + "/"+ str(instance.id)+".png"
-                # renamed_image = os.rename(old_name, new_name)
                 content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp,'name': instance.name,'username': instance.username, 'logo': instance.logo, 'profile_url': instance.profile_url,'id' : instance.id}
                 mobile = instance.mobile
                 otp = instance.otp
@@ -58,10 +55,6 @@ class RegistrationAPIView(APIView):
             mobile = request.data['mobile']
             if serializer.is_valid(raise_exception=True):
                 instance = serializer.save()
-                # old_name = str(instance.logo)
-                # new_name = str(request.get_host()) + "/"+ str(instance.id)+".png"
-                # renamed_image = os.rename(old_name, new_name)
-                # renamed_image.save()
                 content = {'Status':True,'Message':'Success','mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
                            'username': instance.username, 'logo': instance.logo, 'profile_url': instance.profile_url}
                 mobile = instance.mobile
