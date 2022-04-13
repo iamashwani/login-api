@@ -13,6 +13,7 @@ def content_file_name(instance, filename):
     og_filename2 = ext2.replace(og_filename, str(instance.id))
     return os.path.join('profile/', og_filename2)
 
+
 class User(models.Model):
     mobile = models.CharField(max_length=20)
     otp = models.CharField(max_length=6)

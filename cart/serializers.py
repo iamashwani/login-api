@@ -45,7 +45,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             og_filename2 = ext2.replace(og_filename, str(instance.id))
             # r = os.path.join('profile/', og_filename2)
             # pat=default_stroage.save(r,ContentFileName())
-            # instance.profile_url = 'http://127.0.0.1:8000/'+ og_filename2
+            instance.profile_url = 'http://127.0.0.1:8000/'+ og_filename2
             instance.profile_dp = og_filename2
             r = os.path.join('profile/', instance.profile_url)
             
