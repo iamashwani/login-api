@@ -154,14 +154,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_KEY = "e1460c3b-b3f1-11ec-a4c2-0200cd936042"
 
 # Rest Framework Settings
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    "NON_FIELD_ERRORS_KEY": "error",
-    "EXCEPTION_HANDLER": "login-api.cart.exceptions.core_exception_handler",
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         # 'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication',
+#         'rest_framework.authentication.TokenAuthentication',
+#     ],
+#     "NON_FIELD_ERRORS_KEY": "error",
+#     "EXCEPTION_HANDLER": "login-api.cart.exceptions.core_exception_handler",
    # 'EXCEPTION_HANDLER': [
    #     'login-api.cart.exceptions.custom_exception_handler',
    #     'rest_framework.views.exception_handler'
@@ -177,7 +177,7 @@ REST_FRAMEWORK = {
 
     # ),
 
-}
+# }
 
 # AUTH_USER_MODEL = 'myapp.MyUser'
 from datetime import timedelta
