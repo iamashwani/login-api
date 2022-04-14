@@ -1,3 +1,6 @@
+from rest_framework.views import exception_handler
+
+
 def custom_exception_handler(exc, context):
     handlers = {
         "ValidationError" : _handle_generic_error,
@@ -8,18 +11,18 @@ def custom_exception_handler(exc, context):
 
     response = exception_handler(exc, context)
 
-    if response is not None:
-        if "AuthUserAPIView" in str(context[view]) and exc.status_code == 401:
-            response.status_code = 200
-            response.data = {'is_logged_in': False,
-                             'status_code':200}
+    # if response is not None:
+    #     if "VerifyOTPView" in str(context['views']) and exc.status_code == 401:
+    #         response.status_code = 200
+    #         response.data = {'is_logged_in': False,
+    #                          'status_code':200}
 
-        response.data['status_code'] = response.status_code
+    # response.data['status_code'] = response.status_code
 
-    exception_class = exc.__class__.__name__
-
-    if exception_class in handlers:
-        return handlers[exception_class](exc, context, response)
+    # exception_class = exc.__class__.__name__
+    #
+    # if exception_class in handlers:
+    #     return handlers[exception_class](exc, context, response)
 
 
 def _handle_authentication_error(exc,context, response):
@@ -28,5 +31,7 @@ def _handle_authentication_error(exc,context, response):
         'status_code' : response.status_code
     }
     return response
+
+
 def _handle_generic_error(exc, context, response):
     return response

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ztja6%f-w(cfoy@$ovr-d^j9)nru!-1^+0b+!o)@%_1pvnxs^-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['52.66.212.166','*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
-    'corsheaders',
+    # 'corsheaders',
 ]
 
 
@@ -161,7 +161,7 @@ AUTH_KEY = "e1460c3b-b3f1-11ec-a4c2-0200cd936042"
 
 
 # REST_FRAMEWORK = {
-#     'EXCEPTION_HANDLER': 'utils.exceptionhandler.'
+#     'EXCEPTION_HANDLER': 'utils.exceptionhandler.custom_exception_handler'
 # }
 # Rest Framework Settings
 # REST_FRAMEWORK = {
@@ -224,13 +224,3 @@ from datetime import timedelta
 #     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 # }
 
-# ses_id = request.session.session_key
-# token = get_token(request)
-# cookies = {'csrftoken': token, 'sessionid': ses_id}
-# response = requests.get('http://127.0.0.1:8000/api/api_product/product_types/', cookies=cookies)
-# REST_FRAMEWORK = {
-#     'DEFAULT_RENDERER_CLASSES': [
-#         'rest_framework.renderers.JSONRenderer',
-#         'rest_framework.renderers.BrowsableAPIRenderer',
-#     ]
-# }

@@ -8,17 +8,29 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
 
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+import os
+from cart.storage import OverwriteStorage
+
+
+def content_file_name(instance, filename):
+    extension = filename.split(".")[-1]
+    ext2 = filename.replace(extension, "png")
+    og_filename = ext2.split('.')[0]
+    og_filename2 = ext2.replace(og_filename, str(instance.id))
+    return os.path.join('profile/', og_filename2)
 
 
 class User(models.Model):
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{6,15}$',
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                  message="Mobile incorrect.")
     mobile = models.CharField(validators=[phone_regex], max_length=17, blank=True,null=True)
     # mobile = models.IntegerField(max_length=17, blank=True,null=True)
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200,null=True, blank=True,)
     username = models.CharField(max_length=200,null=True, blank=True,)
-    profile = models.ImageField(null=True, blank=True)
+    profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(),null=True, blank=True)
     profile_url = models.CharField(max_length=200)
     profile_id = models.IntegerField(default=0)
 
