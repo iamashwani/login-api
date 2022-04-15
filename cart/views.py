@@ -159,23 +159,32 @@ def get_wallet(request, pk):
 
 
 @api_view(['GET'])
-def total_money(request, pk):
+def total_of_add_money(request,pk):
     try:
         qs = Wallet.objects.get(pk=pk)
         if request.method == 'GET':
             serializer = walletserializer(qs)
-            qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+            qs.total_amount = qs.total_amount + qs.add_amount
             qs.save()
-            json_data = serializer.data
-            x = GetResponceSerializer(json_data)
-            x = {**x.data, **json_data}
-            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-        else:
-            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                                status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('')
     except:
-        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again laterr", },
-                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+@api_view(['GET'])
+def total_of_win_money(request,pk):
+    try:
+        qs = Wallet.objects.get(pk=pk)
+        if request.method == 'GET':
+            serializer = walletserializer(qs)
+            qs.total_amount = qs.total_amount + qs.win_amount
+            qs.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response('')
+    except:
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 
