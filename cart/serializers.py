@@ -65,7 +65,7 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
 class walletserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','total_amount','deposit_cash','winning_cash','deduct_amount']
+        fields = ['user','total_amount','deposit_cash','winning_cash','withdraw_amount']
 
 class walletserializer_add(serializers.ModelSerializer):
     class Meta:
@@ -75,7 +75,7 @@ class walletserializer_add(serializers.ModelSerializer):
 class walletserializer_deduct(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['user','total_amount','deposit_cash','winning_cash','deduct_amount']
+        fields = ['user','total_amount','deposit_cash','winning_cash','withdraw_amount']
 
 
 

@@ -71,21 +71,19 @@ class VerifyOTPView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = VerifyOTPSerializer
 
-    def post(self, request,id):
+    def post(self, request, id):
         serializer = VerifyOTPSerializer(data=request.data)
         otp_sent = request.data['otp']
-        mobile = request.data['mobile']
-        user_id = User.objects.get(id=id)
+        otp = User.objects.get(pk=id)
         if otp_sent:
-            old = User.objects.filter(id=user_id.id)
+            old = User.objects.filter(id=otp.id)
             if old is not None:
                 old = old.first()
                 otp = old.otp
-                if User.objects.filter(id=user_id.id).update(otp = otp_sent):
-
-                    return Response({'status': True,'detail': 'OTP is correct'})
+                if str(otp) == str(otp_sent):
+                    return Response({'status': True,'message': 'OTP is correct'})
                 else:
-                    return Response({'status': False,'detail': 'OTP incorrect, please try again'})
+                    return Response({'status': False,'message': 'OTP incorrect, please try again'})
 
 @api_view(['GET'])
 def Get_Profile(request,pk):
@@ -120,14 +118,25 @@ def get_wallet(request, pk):
     return Response({"Something went wrong. Please try again later."}, status=404)
 from django.db.models import F
 @api_view(['GET'])   
-def total_money(request,pk):
+def total_of_add_money(request,pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer(qs)
-        qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
+        qs.total_amount = qs.total_amount + qs.add_amount 
         qs.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response('')
+
+@api_view(['GET'])   
+def total_of_win_money(request,pk):
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = walletserializer(qs)
+        qs.total_amount = qs.total_amount + qs.win_amount
+        qs.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response('')
+
 @api_view(['GET'])   
 def full_money(request,pk):
     qs = Wallet.objects.get(pk=pk)
@@ -145,7 +154,7 @@ def withdraw_amount(request,pk):
     qs = Wallet.objects.get(pk=pk)
     if request.method == 'GET':
         serializer = walletserializer_deduct(qs)
-        if qs.winning_cash > qs.withdraw_amount:
+        if qs.winning_cash >= qs.withdraw_amount:
             qs.winning_cash = qs.winning_cash - qs.withdraw_amount
             qs.total_amount = qs.total_amount - qs.withdraw_amount
             qs.save()
