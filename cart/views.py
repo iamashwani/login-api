@@ -10,6 +10,9 @@ from rest_framework.decorators import api_view
 import urllib.request as urllib2
 import http.client
 import os
+from rest_framework.generics import ListAPIView
+from .models import ReferralCode
+from .serializers import RefferCodeSerializer
 # def send_otp(mobile, otp):
     
 #     authkey = settings.AUTH_KEY
@@ -163,4 +166,8 @@ def withdraw_amount(request,pk):
         else:
             return Response({"Not have enough balance"})
 
-        
+class RefferCodeJsonListView(ListAPIView):
+    def get(self, request):
+        queryset = ReferralCode.objects.filter(user=request.user)
+        data = RefferCodeSerializer(queryset, many=True)
+        return Response(data.data, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Wallet
+from .models import User, Wallet, ReferralCode, ReferralRelationship
 import random
 import os
 from pathlib import Path
@@ -7,7 +7,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 from django.conf import settings
 import base64
 # from django.core.files.storage import default_stroage
-
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -79,3 +78,15 @@ class walletserializer_deduct(serializers.ModelSerializer):
 
 
 
+
+
+class ReferralSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReferralRelationship
+        fields = ["employer","employee", "refer_token"]
+
+class RefferCodeSerializer(serializers.ModelSerializer):
+    referral_code = ReferralSerializer(many=True, default="")
+    class Meta:
+        model = ReferralCode
+        fields = [ "token", "user", "referral_code"]

@@ -33,3 +33,15 @@ class Wallet(models.Model):
     winning_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     withdraw_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)   
   
+
+class ReferralRelationship(models.Model):
+    # who invite 
+    employer = models.ForeignKey(User,related_name='inviter',verbose_name="inviter",on_delete=models.CASCADE,)
+    # who connected 
+    employee = models.ForeignKey(User,related_name='invited',verbose_name="invited",on_delete=models.CASCADE,)
+    # referral code
+    refer_token = models.ForeignKey("ReferralCode",related_name="referral_code",verbose_name="referral_code",on_delete=models.CASCADE,)
+
+class ReferralCode(models.Model):
+    token = models.CharField(unique=True, max_length=150)
+    user = models.ForeignKey(User, verbose_name="code_master", on_delete=models.CASCADE)

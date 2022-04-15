@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'cart',
     'rest_framework',
     'rest_framework_simplejwt',
+    'user',
     
     # 'django_cleanup.apps.CleanupConfig',
 ]
@@ -194,3 +195,5 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+AUTH_USER_MODEL = 'user.User1'
