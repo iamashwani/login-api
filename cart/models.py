@@ -19,7 +19,7 @@ def content_file_name(instance, filename):
     ext2 = filename.replace(extension, "png")
     og_filename = ext2.split('.')[0]
     og_filename2 = ext2.replace(og_filename, str(instance.id))
-    return os.path.join('profile/', og_filename2)
+    return os.path.join('', og_filename2)
 
 
 class User(models.Model):
