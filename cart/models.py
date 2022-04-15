@@ -38,10 +38,10 @@ class User(models.Model):
 class Wallet(models.Model):
     user = models.ForeignKey(User, null=True, related_name='wallet_mobile', on_delete=models.CASCADE)
     # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
-    total_amount = models.DecimalField(_('Total amount'), max_digits=10, decimal_places=2, default=10)
-    add_amount = models.DecimalField(_('Add amount'), max_digits=10, decimal_places=2, default=0)
-    deposit_cash = models.DecimalField(_('Full Add amount'), max_digits=10, decimal_places=2, default=0)
-    win_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    winning_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    withdraw_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_amount = models.FloatField(_('Total amount'), default=10)
+    add_amount = models.FloatField(_('Add amount'), default=0)
+    deposit_cash = models.FloatField(_('Full Add amount'),default=0)
+    win_amount = models.FloatField(default=0)
+    winning_cash = models.FloatField(default=0)
+    withdraw_amount = models.FloatField(default=0)
 

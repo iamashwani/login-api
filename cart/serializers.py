@@ -34,7 +34,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id
-            instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
+            # instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
             instance.save()
             # path = os.path.join(BASE_DIR, 'static/images')
             # dir_list = os.listdir(path)
@@ -69,9 +69,10 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
 
 
 class UserGetProfileChangeSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
-        fields = ['name', 'username', 'profile_url', 'profile_id']
+        fields = ['name', 'username', 'profile', 'profile_id']
 
 
 class UserProfileChangeSerializer(serializers.ModelSerializer):
