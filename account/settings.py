@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ztja6%f-w(cfoy@$ovr-d^j9)nru!-1^+0b+!o)@%_1pvnxs^-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['52.66.212.166']
+ALLOWED_HOSTS = ['52.66.212.166','*']
 
 
 # Application definition
@@ -137,12 +137,13 @@ AUTH_KEY = "92lYpsEmFj2C2"
 #     'EXCEPTION_HANDLER': 'utils.exceptionhandler.custom_exception_handler'
 # }
 # Rest Framework Settings
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         # 'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.BasicAuthentication',
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 #     "NON_FIELD_ERRORS_KEY": "error",
 #     "EXCEPTION_HANDLER": "login-api.cart.exceptions.core_exception_handler",
 #    # 'EXCEPTION_HANDLER': [

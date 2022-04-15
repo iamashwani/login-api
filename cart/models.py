@@ -30,7 +30,7 @@ class User(models.Model):
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200,null=True, blank=True,)
     username = models.CharField(max_length=200,null=True, blank=True,)
-    profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(),null=True, blank=True)
+    profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True)
     profile_url = models.CharField(max_length=200)
     profile_id = models.IntegerField(default=0)
 
