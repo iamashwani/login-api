@@ -120,25 +120,23 @@ def Get_Profile(request, pk):
 
 @api_view(['GET', 'POST'])
 def Update_Profile(request,pk):
-    try:
-        if request.method == 'GET':
-            snippet = User.objects.get(pk=pk)
-            serializer = UserProfileChangeSerializer(snippet)
-            return Response(serializer.data)
-        elif request.method == 'POST':
-            snippet = User.objects.get(pk=pk)
-            serializer = UserProfileChangeSerializer(snippet, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                json_data = serializer.data
-                x = GetResponceSerializer(json_data)
-                x = {**x.data, **json_data}
-                return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-            else:
-                return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
-    except:
-        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
-                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    if request.method == 'GET':
+        snippet = User.objects.get(pk=pk)
+        serializer = UserProfileChangeSerializer(snippet)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        snippet = User.objects.get(pk=pk)
+        serializer = UserProfileChangeSerializer(snippet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            json_data = serializer.data
+            x = GetResponceSerializer(json_data)
+            x = {**x.data, **json_data}
+            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+        else:
+            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['GET'])

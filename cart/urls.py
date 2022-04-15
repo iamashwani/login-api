@@ -18,6 +18,6 @@ urlpatterns = [
     path('withdraw_amount/<int:pk>/', views.withdraw_amount, name='withdraw_amount'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
-urlpatterns = format_suffix_patterns(urlpatterns)
+# urlpatterns = format_suffix_patterns(urlpatterns)
 
 # handler404 = 'cart.views.api_500_handler'
