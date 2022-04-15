@@ -12,19 +12,30 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 import http.client
 from django.http import HttpResponse, JsonResponse
+import urllib.request as urllib2
 
 
 def send_otp(mobile, otp):
-    url = http.client.HTTPConnection("2factor.in")
+
     authkey = settings.AUTH_KEY
-    payload = ""
-    headers = {
-        'cache-control': "no-cache"
-    }
-    url.request("GET", "/API/V1/"+str(authkey)+"/SMS/"+str(mobile)+"/"+str(otp),payload, headers)
-    res = url.getresponse()
-    data = res.read()
+    url = "http://amazesms.in/api/pushsms?user=hogotp&authkey="+authkey+"&sender=AMTSHR&mobile="+mobile+"&text=Hi%20%2C%20Your%20OTP%20is%20"+otp+".%20Valid%20for%203min.%20AMTSHR&entityid=1201159141994639834&templateid=1507164906024124641&rpt=1"
+
+    req = urllib2.Request(url)
+    page = urllib2.urlopen(req)
+    data = page.read()
     print(data.decode("utf-8"))
+
+# def send_otp(mobile, otp):
+#     url = http.client.HTTPConnection("2factor.in")
+#     authkey = settings.AUTH_KEY
+#     payload = ""
+#     headers = {
+#         'cache-control': "no-cache"
+#     }
+#     url.request("GET", "/API/V1/"+str(authkey)+"/SMS/"+str(mobile)+"/"+str(otp),payload, headers)
+#     res = url.getresponse()
+#     data = res.read()
+#     print(data.decode("utf-8"))
 
 
 class RegistrationAPIView(APIView):
@@ -65,8 +76,8 @@ class RegistrationAPIView(APIView):
                 else:
                     return JsonResponse({'status': False, "message": "Login in Failed"}, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                                status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                                status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 class VerifyOTPView(APIView):
@@ -88,8 +99,8 @@ class VerifyOTPView(APIView):
                     else:
                         return JsonResponse({'status': False,'message': 'OTP incorrect, please try again'})
         except:
-            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                                status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                                status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 @api_view(['GET'])
@@ -103,8 +114,8 @@ def Get_Profile(request, pk):
             x = {**x.data, **json_data}
             return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                        status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 @api_view(['GET', 'POST'])
@@ -126,8 +137,8 @@ def Update_Profile(request,pk):
             else:
                 return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                        status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 @api_view(['GET'])
@@ -143,8 +154,8 @@ def get_wallet(request, pk):
         else:
             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later."}, status=404)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                        status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 @api_view(['GET'])
@@ -163,8 +174,8 @@ def total_money(request, pk):
             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
                                 status=status.HTTP_400_BAD_REQUEST)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                        status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again laterr", },
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 
@@ -184,8 +195,8 @@ def full_money(request, pk):
         else:
             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                        status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 @api_view(['GET'])
@@ -205,5 +216,5 @@ def withdraw_amount(request, pk):
             else:
                 return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                        status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
