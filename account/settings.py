@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ztja6%f-w(cfoy@$ovr-d^j9)nru!-1^+0b+!o)@%_1pvnxs^-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['52.66.212.166','*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -214,7 +214,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-# ses_id = request.session.session_key
-# token = get_token(request)
-# cookies = {'csrftoken': token, 'sessionid': ses_id}
-# response = requests.get('http://127.0.0.1:8000/api/api_product/product_types/', cookies=cookies)
+# REST_FRAMEWORK = {
+#     'EXCEPTION_HANDLER': 'utils.exceptionhandler.custom_exception_handler'
+# }
