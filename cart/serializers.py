@@ -1,7 +1,6 @@
 from email.policy import default
 from rest_framework import serializers
 from .models import User,Wallet,Transcations
-
 import pyotp
 import random
 import os
@@ -19,6 +18,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance = self.Meta.model(**validated_data)
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords, k=6)))
+        mywordss = "123456789,abcdefghijklmnopqrst,ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        referral = "R" + str(''.join(random.choices(mywordss, k=8)))
         # path = os.path.join(BASE_DIR, 'static/images')
         # dir_list = os.listdir(path)
         # random_logo = random.choice(dir_list)
@@ -35,6 +36,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id
+            instance.referral = referral
             # instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
             instance.save()
             # path = os.path.join(BASE_DIR, 'static/images')
@@ -111,7 +113,6 @@ class GetResponceSerializer(serializers.Serializer):
         return "success"
 
 
-
 class Transcationserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
@@ -124,6 +125,19 @@ class TranscationHistoryserializer(serializers.ModelSerializer):
         model = Transcations
         fields = ['amount', 'description','insert_date_and_time']
         # read_only_fields = ('wallet',)
+
+
+# class ReferralSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ReferralRelationship
+#         fields = ["employer","employee", "refer_token"]
+#
+#
+# class RefferCodeSerializer(serializers.ModelSerializer):
+#     referral_code = ReferralSerializer(many=True, default="")
+#     class Meta:
+#         model = ReferralCode
+#         fields = ["token", "user", "referral_code"]
 
 
 

@@ -13,6 +13,9 @@ from rest_framework.decorators import api_view
 import http.client
 from django.http import HttpResponse, JsonResponse
 import urllib.request as urllib2
+# from .serializers import RefferCodeSerializer
+# from rest_framework.generics import ListAPIView
+# from .models import ReferralCode
 
 
 def send_otp(mobile, otp):
@@ -148,50 +151,65 @@ def get_wallet(request, pk):
 
 @api_view(['GET', 'POST'])
 def transcationmoney(request, pk):
-    if request.method == 'POST':
-        user = User.objects.get(pk=pk)
-        qs = Wallet.objects.get(pk=pk)
-        serializer = Transcationserializer(qs, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            amount = request.data['amount']
-            qs.amount = amount
-            description = request.data['description']
-            qs.description = description
-            if amount > 0:
-                qs.winning_cash = qs.winning_cash + amount
-                qs.save()
-            elif amount < 0:
-                qs.winning_cash = qs.winning_cash + amount
-                qs.save()
-            obj = Transcations.objects.create(user=user,wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
-            obj.save()
-        json_data = serializer.data
-        x = GetResponceSerializer(json_data)
-        x = {**x.data, **json_data}
-        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-    else:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                            status=status.HTTP_400_BAD_REQUEST)
+    try:
+
+        if request.method == 'POST':
+            user = User.objects.get(pk=pk)
+            qs = Wallet.objects.get(pk=pk)
+            serializer = Transcationserializer(qs, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                amount = request.data['amount']
+                qs.amount = amount
+                description = request.data['description']
+                qs.description = description
+                if amount > 0:
+                    qs.winning_cash = qs.winning_cash + amount
+                    qs.save()
+                elif amount < 0:
+                    qs.winning_cash = qs.winning_cash + amount
+                    qs.save()
+                obj = Transcations.objects.create(user=user,wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
+                obj.save()
+            json_data = serializer.data
+            x = GetResponceSerializer(json_data)
+            x = {**x.data, **json_data}
+            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+        else:
+            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
+                                status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
 
 @api_view(['GET'])
 def TranscationsHistory(request,pk):
-    if request.method == 'GET':
-        wll = Wallet.objects.get(pk=pk)
-        qs = Transcations.objects.filter(wallet=wll).order_by('-pk')
-        serializer = TranscationHistoryserializer(qs)
-        json_data = []
-        for x in qs:
-            json_data.append({
-                'id': x.pk,
-                'amount': x.amount,
-                'description': x.description,
-                'date': x.insert_date_and_time,})
-        return JsonResponse({"status": True, "message": "success", "data": json_data}, status=status.HTTP_200_OK, safe=False)
-    else:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if request.method == 'GET':
+            wll = Wallet.objects.get(pk=pk)
+            qs = Transcations.objects.filter(wallet=wll).order_by('-pk')
+            serializer = TranscationHistoryserializer(qs)
+            json_data = []
+            for x in qs:
+                json_data.append({
+                    'id': x.pk,
+                    'amount': x.amount,
+                    'description': x.description,
+                    'date': x.insert_date_and_time,})
+            return JsonResponse({"status": True, "message": "success", "data": json_data}, status=status.HTTP_200_OK, safe=False)
+        else:
+            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+                            status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+
+# class RefferCodeJsonView(APIView):
+#     def get(self, request):
+#         queryset = ReferralCode.objects.filter(user=request.user)
+#         data = RefferCodeSerializer(queryset, many=True)
+#         return Response(data.data, status=status.HTTP_200_OK)
 
 # from rest_framework import viewsets
 # class SpeciesViewSet(viewsets.ModelViewSet):
@@ -267,3 +285,4 @@ def TranscationsHistory(request,pk):
 #     except:
 #         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
 #                         status=status.HTTP_503_SERVICE_UNAVAILABLE)
+

@@ -8,12 +8,15 @@ urlpatterns = [
 
     path('register/', RegistrationAPIView.as_view()),
     path('verify/<int:id>/', VerifyOTPView.as_view()),
+
     path('get_profile/<int:pk>/', views.Get_Profile, name='get_profile'),
     path('update_profile/<int:pk>/', views.Update_Profile, name='update_profile'),
 
     path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
     path('transcation/<int:pk>/', views.transcationmoney, name='transcation'),
     path('transcation_history/<int:pk>/', views.TranscationsHistory, name='transcation_history'),
+
+    # path('referral/', RefferCodeJsonView.as_view()),
 
     # path('total_of_add_money/<int:pk>', views.total_of_add_money, name='total_of_add_money'),
     # path('total_of_win_money/<int:pk>', views.total_of_win_money, name='total_of_win_money'),
