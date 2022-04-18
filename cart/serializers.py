@@ -82,7 +82,7 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
         fields = ['name','username', 'profile', 'profile_id']
 
 
-class walletserializer(serializers.ModelSerializer):
+class GetTotalwalletserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['user','total_amount','deposit_cash','winning_cash','withdraw_amount']
@@ -122,8 +122,8 @@ class Transcationserializer(serializers.ModelSerializer):
 class TranscationHistoryserializer(serializers.ModelSerializer):
     class Meta:
         model = Transcations
-        fields = ['wallet', 'amount', 'description']
-        read_only_fields = ('wallet',)
+        fields = ['amount', 'description','insert_date_and_time']
+        # read_only_fields = ('wallet',)
 
 
 
