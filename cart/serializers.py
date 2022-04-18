@@ -1,6 +1,7 @@
 from email.policy import default
 from rest_framework import serializers
-from .models import User,Wallet,Transcations
+from .models import User,Wallet,Transaction
+
 import pyotp
 import random
 import os
@@ -34,6 +35,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id
+            # instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
             instance.save()
             # path = os.path.join(BASE_DIR, 'static/images')
             # dir_list = os.listdir(path)
@@ -68,9 +70,10 @@ class VerifyOTPSerializer(serializers.ModelSerializer):
 
 
 class UserGetProfileChangeSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
-        fields = ['name', 'username', 'profile_url', 'profile_id']
+        fields = ['name', 'username', 'profile', 'profile_id']
 
 
 class UserProfileChangeSerializer(serializers.ModelSerializer):
@@ -79,7 +82,7 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
         fields = ['name','username', 'profile', 'profile_id']
 
 
-class walletserializer(serializers.ModelSerializer):
+class GetTotalwalletserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['user','total_amount','deposit_cash','winning_cash','withdraw_amount']
@@ -108,15 +111,19 @@ class GetResponceSerializer(serializers.Serializer):
         return "success"
 
 
+
 class Transcationserializer(serializers.ModelSerializer):
     class Meta:
-        model = Transcations
-        fields = ['amount', 'description', 'total_amount']
+        model = Wallet
+        fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
+        # read_only_fields = ('winning_cash',)
 
 
 class TranscationHistoryserializer(serializers.ModelSerializer):
     class Meta:
-        model = Transcations
-        fields = ['wallet', 'amount', 'description']
-        read_only_fields = ('wallet',)
+        model = Transaction
+        fields = ['amount', 'description', 'date', 'time']
+        # read_only_fields = ('wallet',)
+
+
 

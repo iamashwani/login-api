@@ -19,7 +19,7 @@ def content_file_name(instance, filename):
     ext2 = filename.replace(extension, "png")
     og_filename = ext2.split('.')[0]
     og_filename2 = ext2.replace(og_filename, str(instance.id))
-    return os.path.join('profile/', og_filename2)
+    return os.path.join('', og_filename2)
 
 
 class User(models.Model):
@@ -30,7 +30,7 @@ class User(models.Model):
     otp = models.CharField(max_length=6)
     name = models.CharField(max_length=200,null=True, blank=True,)
     username = models.CharField(max_length=200,null=True, blank=True,)
-    profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(),null=True, blank=True)
+    profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True)
     profile_url = models.CharField(max_length=200)
     profile_id = models.IntegerField(default=0)
 
@@ -38,22 +38,23 @@ class User(models.Model):
 class Wallet(models.Model):
     user = models.ForeignKey(User, null=True, related_name='wallet_mobile', on_delete=models.CASCADE)
     # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
-    total_amount = models.DecimalField(_('Total amount'), max_digits=10, decimal_places=2, default=10)
-    add_amount = models.DecimalField(_('Add amount'), max_digits=10, decimal_places=2, default=0)
-    deposit_cash = models.DecimalField(_('Full Add amount'), max_digits=10, decimal_places=2, default=0)
-    win_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    winning_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    withdraw_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
+    total_amount = models.FloatField(_('Total amount'), default=10)
+    add_amount = models.FloatField(_('Add amount'), default=0)
+    deposit_cash = models.FloatField(_('Full Add amount'),default=0)
+    win_amount = models.FloatField(default=0)
+    winning_cash = models.FloatField(default=0)
+    withdraw_amount = models.FloatField(default=0)
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
     description = models.CharField(max_length=200, null=True, blank=True, )
 
 
+class Transaction(models.Model):
+    user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
+    description = models.CharField(max_length=200,blank=True,)
+    winning_cash = models.FloatField(default=0)
+    date = models.DateField(null=True, auto_now_add=True)
+    time = models.TimeField(null=True, auto_now_add=True)
 
-class Transcations(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
-    wallet = models.ForeignKey(Wallet,on_delete=models.CASCADE)
-    # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
-    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
-    description = models.CharField(max_length=200,null=True, blank=True,)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
