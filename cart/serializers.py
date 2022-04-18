@@ -1,6 +1,7 @@
 from email.policy import default
 from rest_framework import serializers
-from .models import User,Wallet
+from .models import User,Wallet,Transcations
+
 import pyotp
 import random
 import os
@@ -108,6 +109,21 @@ class GetResponceSerializer(serializers.Serializer):
 
     def get_message(self, obj):
         return "success"
+
+
+
+class Transcationserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['amount', 'description', 'winning_cash']
+        # read_only_fields = ('winning_cash',)
+
+
+class TranscationHistoryserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transcations
+        fields = ['wallet', 'amount', 'description']
+        read_only_fields = ('wallet',)
 
 
 

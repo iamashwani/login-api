@@ -44,4 +44,14 @@ class Wallet(models.Model):
     win_amount = models.FloatField(default=0)
     winning_cash = models.FloatField(default=0)
     withdraw_amount = models.FloatField(default=0)
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
+    description = models.CharField(max_length=200, null=True, blank=True, )
+
+
+class Transcations(models.Model):
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
+    description = models.CharField(max_length=200,null=True, blank=True,)
+
+
 
