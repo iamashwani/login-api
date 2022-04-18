@@ -19,7 +19,7 @@ def content_file_name(instance, filename):
     ext2 = filename.replace(extension, "png")
     og_filename = ext2.split('.')[0]
     og_filename2 = ext2.replace(og_filename, str(instance.id))
-    return os.path.join('profile/', og_filename2)
+    return os.path.join('', og_filename2)
 
 
 class User(models.Model):
@@ -44,4 +44,18 @@ class Wallet(models.Model):
     win_amount = models.FloatField(default=0)
     winning_cash = models.FloatField(default=0)
     withdraw_amount = models.FloatField(default=0)
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
+    description = models.CharField(max_length=200, null=True, blank=True, )
+
+
+class Transcations(models.Model):
+    user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
+    description = models.CharField(max_length=200,blank=True,)
+    winning_cash = models.FloatField(default=0)
+    insert_date_and_time = models.DateTimeField(null=True, auto_now_add=True)
+
+
+
 

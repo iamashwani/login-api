@@ -2,11 +2,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from django.conf import settings
-from .models import User,Wallet
+from .models import User,Wallet,Transcations
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
-    walletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
-    walletserializer_add,GetResponceSerializer
+    GetTotalwalletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
+    walletserializer_add,GetResponceSerializer,TranscationHistoryserializer,Transcationserializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
@@ -24,18 +24,6 @@ def send_otp(mobile, otp):
     page = urllib2.urlopen(req)
     data = page.read()
     print(data.decode("utf-8"))
-
-# def send_otp(mobile, otp):
-#     url = http.client.HTTPConnection("2factor.in")
-#     authkey = settings.AUTH_KEY
-#     payload = ""
-#     headers = {
-#         'cache-control': "no-cache"
-#     }
-#     url.request("GET", "/API/V1/"+str(authkey)+"/SMS/"+str(mobile)+"/"+str(otp),payload, headers)
-#     res = url.getresponse()
-#     data = res.read()
-#     print(data.decode("utf-8"))
 
 
 class RegistrationAPIView(APIView):
@@ -144,7 +132,9 @@ def get_wallet(request, pk):
     try:
         qs = Wallet.objects.get(pk=pk)
         if request.method == 'GET':
-            serializer = walletserializer(qs)
+            serializer = GetTotalwalletserializer(qs)
+            qs.total_amount = qs.total_amount + qs.winning_cash
+            qs.save()
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
             x = {**x.data, **json_data}
@@ -156,63 +146,124 @@ def get_wallet(request, pk):
                         status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
-@api_view(['GET'])
-def total_money(request, pk):
-    try:
+@api_view(['GET', 'POST'])
+def transcationmoney(request, pk):
+    if request.method == 'POST':
+        user = User.objects.get(pk=pk)
         qs = Wallet.objects.get(pk=pk)
-        if request.method == 'GET':
-            serializer = walletserializer(qs)
-            qs.total_amount = qs.total_amount + qs.add_amount + qs.win_amount
-            qs.save()
-            json_data = serializer.data
-            x = GetResponceSerializer(json_data)
-            x = {**x.data, **json_data}
-            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-        else:
-            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
-                                status=status.HTTP_400_BAD_REQUEST)
-    except:
-        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again laterr", },
-                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-
-
-@api_view(['GET'])
-def full_money(request, pk):
-    try:
-        qs = Wallet.objects.get(pk=pk)
-        if request.method == 'GET':
-            serializer = walletserializer_add(qs)
-            qs.deposit_cash = qs.deposit_cash + qs.add_amount
-            qs.winning_cash = qs.winning_cash + qs.win_amount
-            qs.save()
-            json_data = serializer.data
-            x = GetResponceSerializer(json_data)
-            x = {**x.data, **json_data}
-            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-        else:
-            return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
-    except:
-        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
-                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-
-@api_view(['GET'])
-def withdraw_amount(request, pk):
-    try:
-        qs = Wallet.objects.get(pk=pk)
-        if request.method == 'GET':
-            serializer = walletserializer_deduct(qs)
-            if qs.winning_cash > qs.withdraw_amount:
-                qs.winning_cash = qs.winning_cash - qs.withdraw_amount
-                qs.total_amount = qs.total_amount - qs.withdraw_amount
+        serializer = Transcationserializer(qs, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            amount = request.data['amount']
+            qs.amount = amount
+            description = request.data['description']
+            qs.description = description
+            if amount > 0:
+                qs.winning_cash = qs.winning_cash + amount
                 qs.save()
-                json_data = serializer.data
-                x = GetResponceSerializer(json_data)
-                x = {**x.data, **json_data}
-                return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-            else:
-                return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
-    except:
-        return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
-                        status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            elif amount < 0:
+                qs.winning_cash = qs.winning_cash + amount
+                qs.save()
+            obj = Transcations.objects.create(user=user,wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
+            obj.save()
+        json_data = serializer.data
+        x = GetResponceSerializer(json_data)
+        x = {**x.data, **json_data}
+        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+    else:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+def TranscationsHistory(request,pk):
+    if request.method == 'GET':
+        wll = Wallet.objects.get(pk=pk)
+        qs = Transcations.objects.filter(wallet=wll).order_by('-pk')
+        serializer = TranscationHistoryserializer(qs)
+        json_data = []
+        for x in qs:
+            json_data.append({
+                'id': x.pk,
+                'amount': x.amount,
+                'description': x.description,
+                'date': x.insert_date_and_time,})
+        return JsonResponse({"status": True, "message": "success", "data": json_data}, status=status.HTTP_200_OK, safe=False)
+    else:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# from rest_framework import viewsets
+# class SpeciesViewSet(viewsets.ModelViewSet):
+#    queryset = Transcations.objects.all()
+#    serializer_class = Transcations
+
+# @api_view(['GET'])
+# def total_of_add_money(request,pk):
+#     try:
+#         qs = Wallet.objects.get(pk=pk)
+#         if request.method == 'GET':
+#             serializer = walletserializer(qs)
+#             qs.total_amount = qs.total_amount + qs.add_amount
+#             qs.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response('')
+#     except:
+#         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+#                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
+#
+# @api_view(['GET'])
+# def total_of_win_money(request,pk):
+#     try:
+#         qs = Wallet.objects.get(pk=pk)
+#         if request.method == 'GET':
+#             serializer = walletserializer(qs)
+#             qs.total_amount = qs.total_amount + qs.win_amount
+#             qs.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response('')
+#     except:
+#         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+#                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
+#
+#
+#
+# @api_view(['GET'])
+# def full_money(request, pk):
+#     try:
+#         qs = Wallet.objects.get(pk=pk)
+#         if request.method == 'GET':
+#             serializer = walletserializer_add(qs)
+#             qs.deposit_cash = qs.deposit_cash + qs.add_amount
+#             qs.winning_cash = qs.winning_cash + qs.win_amount
+#             qs.save()
+#             json_data = serializer.data
+#             x = GetResponceSerializer(json_data)
+#             x = {**x.data, **json_data}
+#             return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+#         else:
+#             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
+#     except:
+#         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+#                         status=status.HTTP_503_SERVICE_UNAVAILABLE)
+#
+#
+# @api_view(['GET'])
+# def withdraw_amount(request, pk):
+#     try:
+#         qs = Wallet.objects.get(pk=pk)
+#         if request.method == 'GET':
+#             serializer = walletserializer_deduct(qs)
+#             if qs.winning_cash > qs.withdraw_amount:
+#                 qs.winning_cash = qs.winning_cash - qs.withdraw_amount
+#                 qs.total_amount = qs.total_amount - qs.withdraw_amount
+#                 qs.save()
+#                 json_data = serializer.data
+#                 x = GetResponceSerializer(json_data)
+#                 x = {**x.data, **json_data}
+#                 return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+#             else:
+#                 return JsonResponse({"status": False, "message": "Something went wrong. Please try again later",}, status=status.HTTP_400_BAD_REQUEST)
+#     except:
+#         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
+#                         status=status.HTTP_503_SERVICE_UNAVAILABLE)
