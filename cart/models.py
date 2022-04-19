@@ -47,6 +47,8 @@ class Wallet(models.Model):
     withdraw_amount = models.FloatField(default=0)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
     description = models.CharField(max_length=200, null=True, blank=True, )
+    referral = models.CharField(max_length=200, null=True, blank=True)
+    referral_status = models.BooleanField(null=True, blank=True)
 
 
 class Transaction(models.Model):

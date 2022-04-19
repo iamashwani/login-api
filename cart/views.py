@@ -6,7 +6,7 @@ from .models import User,Wallet,Transaction
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
     GetTotalwalletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
-    walletserializer_add,GetResponceSerializer,TranscationHistoryserializer,Transcationserializer
+    walletserializer_add,GetResponceSerializer,TransactionHistoryserializer,Transactionserializer,Getreferralserializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
@@ -136,8 +136,8 @@ def get_wallet(request, pk):
         qs = Wallet.objects.get(pk=pk)
         if request.method == 'GET':
             serializer = GetTotalwalletserializer(qs)
-            qs.total_amount = qs.total_amount + qs.winning_cash
-            qs.save()
+            # qs.total_amount = qs.total_amount + qs.winning_cash
+            # qs.save()
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
             x = {**x.data, **json_data}
@@ -155,7 +155,7 @@ def transactionmoney(request, pk):
         if request.method == 'POST':
             user = User.objects.get(pk=pk)
             qs = Wallet.objects.get(pk=pk)
-            serializer = Transcationserializer(qs, data=request.data)
+            serializer = Transactionserializer(qs, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 amount = request.data['amount']
                 qs.amount = amount
@@ -163,11 +163,13 @@ def transactionmoney(request, pk):
                 qs.description = description
                 if amount > 0:
                     qs.winning_cash = qs.winning_cash + amount
+                    qs.total_amount = qs.total_amount + amount
                     qs.save()
                 elif amount < 0:
                     qs.winning_cash = qs.winning_cash + amount
+                    qs.total_amount = qs.total_amount + amount
                     qs.save()
-                obj = Transaction.objects.create(user=user,wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
+                obj = Transaction.objects.create(user=user, wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
                 obj.save()
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
@@ -186,7 +188,7 @@ def transactionsHistory(request,pk):
         if request.method == 'GET':
             wll = Wallet.objects.get(pk=pk)
             qs = Transaction.objects.filter(wallet=wll).order_by('-pk')
-            serializer = TranscationHistoryserializer(qs)
+            serializer = TransactionHistoryserializer(qs)
             json_data = []
             for x in qs:
                 json_data.append({
@@ -204,6 +206,20 @@ def transactionsHistory(request,pk):
                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
+@api_view(['GET'])
+def getreferral(request, pk):
+    try:
+        qs = Wallet.objects.get(pk=pk)
+        if request.method == 'GET':
+            serializer = Getreferralserializer(qs)
+            json_data = serializer.data
+            x = GetResponceSerializer(json_data)
+            x = {**x.data, **json_data}
+            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+        else:
+            return JsonResponse(json_data,status=status.HTTP_200_OK, safe = False)
+    except:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
 # @api_view(['GET'])
 # def total_of_add_money(request,pk):

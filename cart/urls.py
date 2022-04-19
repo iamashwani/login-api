@@ -15,6 +15,7 @@ urlpatterns = [
     path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
     path('transaction/<int:pk>/', views.transactionmoney, name='transaction'),
     path('transaction_history/<int:pk>/', views.transactionsHistory, name='transaction_history'),
+    path('getreferral/<int:pk>/',views.getreferral,name = 'getreferral')
 
     # path('referral/', RefferCodeJsonView.as_view()),
 

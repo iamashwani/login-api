@@ -114,31 +114,24 @@ class GetResponceSerializer(serializers.Serializer):
         return "success"
 
 
-class Transcationserializer(serializers.ModelSerializer):
+class Transactionserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
         # read_only_fields = ('winning_cash',)
 
 
-class TranscationHistoryserializer(serializers.ModelSerializer):
+class TransactionHistoryserializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ['amount', 'description', 'date', 'time']
         # read_only_fields = ('wallet',)
 
 
-# class ReferralSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ReferralRelationship
-#         fields = ["employer","employee", "refer_token"]
-#
-#
-# class RefferCodeSerializer(serializers.ModelSerializer):
-#     referral_code = ReferralSerializer(many=True, default="")
-#     class Meta:
-#         model = ReferralCode
-#         fields = ["token", "user", "referral_code"]
+class Getreferralserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['referral']
 
 
 
