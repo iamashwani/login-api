@@ -1,6 +1,7 @@
 from email.policy import default
 from rest_framework import serializers
-from .models import User,Wallet,Transcations
+from .models import User,Wallet,Transaction
+
 import pyotp
 import random
 import os
@@ -11,15 +12,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'mobile', 'name', 'username','profile_id','profile']
-        read_only_fields = ['id','name', 'username', 'profile_id','profile']
+        fields = ['id', 'mobile', 'name', 'username','profile_id','profile','referral']
+        read_only_fields = ['id','name', 'username', 'profile_id','profile','referral']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords, k=6)))
-        mywordss = "123456789,abcdefghijklmnopqrst,ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        referral = "R" + str(''.join(random.choices(mywordss, k=8)))
+        mywordss = "123456789abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        referral = "" + str(''.join(random.choices(mywordss, k=8)))
         # path = os.path.join(BASE_DIR, 'static/images')
         # dir_list = os.listdir(path)
         # random_logo = random.choice(dir_list)
@@ -116,14 +117,14 @@ class GetResponceSerializer(serializers.Serializer):
 class Transcationserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['amount', 'description', 'winning_cash']
+        fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
         # read_only_fields = ('winning_cash',)
 
 
 class TranscationHistoryserializer(serializers.ModelSerializer):
     class Meta:
-        model = Transcations
-        fields = ['amount', 'description','insert_date_and_time']
+        model = Transaction
+        fields = ['amount', 'description', 'date', 'time']
         # read_only_fields = ('wallet',)
 
 
@@ -138,8 +139,6 @@ class TranscationHistoryserializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = ReferralCode
 #         fields = ["token", "user", "referral_code"]
-
-
 
 
 

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from django.conf import settings
-from .models import User,Wallet,Transcations
+from .models import User,Wallet,Transaction
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
     GetTotalwalletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
@@ -150,9 +150,8 @@ def get_wallet(request, pk):
 
 
 @api_view(['GET', 'POST'])
-def transcationmoney(request, pk):
+def transactionmoney(request, pk):
     try:
-
         if request.method == 'POST':
             user = User.objects.get(pk=pk)
             qs = Wallet.objects.get(pk=pk)
@@ -168,7 +167,7 @@ def transcationmoney(request, pk):
                 elif amount < 0:
                     qs.winning_cash = qs.winning_cash + amount
                     qs.save()
-                obj = Transcations.objects.create(user=user,wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
+                obj = Transaction.objects.create(user=user,wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
                 obj.save()
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
@@ -182,21 +181,36 @@ def transcationmoney(request, pk):
                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
-
+import os
+import datetime
+import re
 @api_view(['GET'])
-def TranscationsHistory(request,pk):
+def transactionsHistory(request,pk):
     try:
         if request.method == 'GET':
+            # import pdb
+            # pdb.set_trace()
             wll = Wallet.objects.get(pk=pk)
-            qs = Transcations.objects.filter(wallet=wll).order_by('-pk')
+            qs = Transaction.objects.filter(wallet=wll).order_by('-pk')
             serializer = TranscationHistoryserializer(qs)
+            # now = datetime.datetime.now()
+            # for item in qs:
+            #     name_parts = item.split('.')
+            #     get_date = re.findall('\d+-\d+-\d+', name_parts[0])
+            #     name_string_part = name_parts[0].replace(get_date[0], '')
+            #     new_name = name_string_part + str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + '.xls'
+            #     os.rename(item, new_name)
+
+
             json_data = []
             for x in qs:
                 json_data.append({
                     'id': x.pk,
                     'amount': x.amount,
                     'description': x.description,
-                    'date': x.insert_date_and_time,})
+                    'date': x.date,
+                    'time': x.time,
+                })
             return JsonResponse({"status": True, "message": "success", "data": json_data}, status=status.HTTP_200_OK, safe=False)
         else:
             return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)

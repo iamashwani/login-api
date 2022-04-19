@@ -13,8 +13,8 @@ urlpatterns = [
     path('update_profile/<int:pk>/', views.Update_Profile, name='update_profile'),
 
     path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
-    path('transcation/<int:pk>/', views.transcationmoney, name='transcation'),
-    path('transcation_history/<int:pk>/', views.TranscationsHistory, name='transcation_history'),
+    path('transaction/<int:pk>/', views.transactionmoney, name='transaction'),
+    path('transaction_history/<int:pk>/', views.transactionsHistory, name='transaction_history'),
 
     # path('referral/', RefferCodeJsonView.as_view()),
 

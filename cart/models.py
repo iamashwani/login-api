@@ -33,7 +33,7 @@ class User(models.Model):
     profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True)
     profile_url = models.CharField(max_length=200)
     profile_id = models.IntegerField(default=0)
-    referral = models.CharField(max_length=150)
+    referral = models.CharField(max_length=150,null=True, blank=True,)
 
 
 class Wallet(models.Model):
@@ -49,27 +49,13 @@ class Wallet(models.Model):
     description = models.CharField(max_length=200, null=True, blank=True, )
 
 
-class Transcations(models.Model):
+class Transaction(models.Model):
     user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
     description = models.CharField(max_length=200,blank=True,)
     winning_cash = models.FloatField(default=0)
-    insert_date_and_time = models.DateTimeField(null=True, auto_now_add=True)
-
-
-# class ReferralRelationship(models.Model):
-#     # who invite
-#     employer = models.ForeignKey(User,related_name='inviter',verbose_name="inviter",on_delete=models.CASCADE,)
-#     # who connected
-#     employee = models.ForeignKey(User,related_name='invited',verbose_name="invited",on_delete=models.CASCADE,)
-#     # referral code
-#     refer_token = models.ForeignKey("ReferralCode",related_name="referral_code",verbose_name="referral_code",on_delete=models.CASCADE,)
-#
-# class ReferralCode(models.Model):
-#     token = models.CharField(unique=True, max_length=150)
-#     user = models.ForeignKey(User, verbose_name="code_master", on_delete=models.CASCADE)
-
-
+    date = models.DateField(null=True, auto_now_add=True)
+    time = models.TimeField(null=True, auto_now_add=True)
 
 
