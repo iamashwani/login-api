@@ -180,28 +180,13 @@ def transactionmoney(request, pk):
         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-
-import os
-import datetime
-import re
 @api_view(['GET'])
 def transactionsHistory(request,pk):
     try:
         if request.method == 'GET':
-            # import pdb
-            # pdb.set_trace()
             wll = Wallet.objects.get(pk=pk)
             qs = Transaction.objects.filter(wallet=wll).order_by('-pk')
             serializer = TranscationHistoryserializer(qs)
-            # now = datetime.datetime.now()
-            # for item in qs:
-            #     name_parts = item.split('.')
-            #     get_date = re.findall('\d+-\d+-\d+', name_parts[0])
-            #     name_string_part = name_parts[0].replace(get_date[0], '')
-            #     new_name = name_string_part + str(now.day) + '-' + str(now.month) + '-' + str(now.year) + '_' + '.xls'
-            #     os.rename(item, new_name)
-
-
             json_data = []
             for x in qs:
                 json_data.append({
@@ -219,16 +204,6 @@ def transactionsHistory(request,pk):
                             status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 
-# class RefferCodeJsonView(APIView):
-#     def get(self, request):
-#         queryset = ReferralCode.objects.filter(user=request.user)
-#         data = RefferCodeSerializer(queryset, many=True)
-#         return Response(data.data, status=status.HTTP_200_OK)
-
-# from rest_framework import viewsets
-# class SpeciesViewSet(viewsets.ModelViewSet):
-#    queryset = Transcations.objects.all()
-#    serializer_class = Transcations
 
 # @api_view(['GET'])
 # def total_of_add_money(request,pk):
