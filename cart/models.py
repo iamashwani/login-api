@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.crypto import get_random_string
 
 from django.core.validators import RegexValidator
-from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 import os
 from cart.storage import OverwriteStorage
@@ -37,7 +36,6 @@ class User(models.Model):
 
 class Wallet(models.Model):
     user = models.ForeignKey(User, null=True, related_name='wallet_mobile', on_delete=models.CASCADE)
-    # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
     total_amount = models.FloatField(_('Total amount'), default=10)
     add_amount = models.FloatField(_('Add amount'), default=0)
     deposit_cash = models.FloatField(_('Full Add amount'),default=0)
@@ -45,9 +43,9 @@ class Wallet(models.Model):
     winning_cash = models.FloatField(default=0)
     withdraw_amount = models.FloatField(default=0)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
-    description = models.CharField(max_length=200, null=True, blank=True, )
-
-
+    description = models.CharField(max_length=200, null=True, blank=True)
+    referral  = models.CharField(max_length=200, null=True, blank=True)
+    referral_status = models.BooleanField(null=True, blank=True)
 class Transcations(models.Model):
     user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)

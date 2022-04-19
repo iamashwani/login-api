@@ -6,7 +6,7 @@ from .models import User,Wallet,Transcations
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
     GetTotalwalletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
-    walletserializer_add,GetResponceSerializer,TranscationHistoryserializer,Transcationserializer
+    walletserializer_add,GetResponceSerializer,TranscationHistoryserializer,Transcationserializer,Getreferralserializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
@@ -194,6 +194,20 @@ def TranscationsHistory(request,pk):
     else:
         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def getreferral(request, pk):
+    try:
+        qs = Wallet.objects.get(pk=pk)
+        if request.method == 'GET':
+            serializer = Getreferralserializer(qs)
+            json_data = serializer.data
+            x = GetResponceSerializer(json_data)
+            x = {**x.data, **json_data}
+            return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+        else:
+            return JsonResponse(json_data,status=status.HTTP_200_OK, safe=False)
+    except:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
 
 # from rest_framework import viewsets
 # class SpeciesViewSet(viewsets.ModelViewSet):

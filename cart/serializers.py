@@ -128,4 +128,7 @@ class TranscationHistoryserializer(serializers.ModelSerializer):
 
 
 
-
+class Getreferralserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['referral']

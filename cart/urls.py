@@ -14,6 +14,7 @@ urlpatterns = [
     path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
     path('transcation/<int:pk>/', views.transcationmoney, name='transcation'),
     path('transcation_history/<int:pk>/', views.TranscationsHistory, name='transcation_history'),
+    path('getreferral/<int:pk>/', views.getreferral, name='getreferral'),
 
     # path('total_of_add_money/<int:pk>', views.total_of_add_money, name='total_of_add_money'),
     # path('total_of_win_money/<int:pk>', views.total_of_win_money, name='total_of_win_money'),
