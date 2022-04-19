@@ -46,6 +46,7 @@ class Wallet(models.Model):
     description = models.CharField(max_length=200, null=True, blank=True)
     referral  = models.CharField(max_length=200, null=True, blank=True)
     referral_status = models.BooleanField(null=True, blank=True)
+    Bonus = models.FloatField(default=0)
 class Transcations(models.Model):
     user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
