@@ -32,7 +32,7 @@ class User(models.Model):
     profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True)
     profile_url = models.CharField(max_length=200)
     profile_id = models.IntegerField(default=0)
-
+    referral  = models.CharField(max_length=200, null=True, blank=True)
 
 class Wallet(models.Model):
     user = models.ForeignKey(User, null=True, related_name='wallet_mobile', on_delete=models.CASCADE)
@@ -44,7 +44,7 @@ class Wallet(models.Model):
     withdraw_amount = models.FloatField(default=0)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=10)
     description = models.CharField(max_length=200, null=True, blank=True)
-    referral  = models.CharField(max_length=200, null=True, blank=True)
+    Recieved_sreferral  = models.CharField(max_length=200, null=True, blank=True)
     referral_status = models.BooleanField(null=True, blank=True)
     Bonus = models.FloatField(default=0)
 class Transcations(models.Model):

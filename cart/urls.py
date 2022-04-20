@@ -15,6 +15,9 @@ urlpatterns = [
     path('transcation/<int:pk>/', views.transcationmoney, name='transcation'),
     path('transcation_history/<int:pk>/', views.TranscationsHistory, name='transcation_history'),
     path('getreferral/<int:pk>/', views.getreferral, name='getreferral'),
+    path('get_bonus_money/<int:pk>',views.get_bonus_money,name ='get_bonus_money'),
+    path('bonus_money/<int:pk>',views.bonus_money,name = 'bonus_money')
+   # path('add_bonus_money/<int:pk>', BonusMoneyAPIView.as_view())
 
     # path('total_of_add_money/<int:pk>', views.total_of_add_money, name='total_of_add_money'),
     # path('total_of_win_money/<int:pk>', views.total_of_win_money, name='total_of_win_money'),

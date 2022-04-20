@@ -36,3 +36,20 @@ elif x == 'add 135 rupees':
     Bonus = Bonus + 135
     print(Bonus)
 # for i in len(li):
+
+@api_view(['GET'])
+def bonus_money(request, pk):
+    qs = Wallet.objects.get(pk=pk)
+    if request.method == 'GET':
+        serializer = Bonusserializer(qs)  
+        json_data = serializer.data
+        x = GetResponceSerializer(json_data)
+        x = {**x.data, **json_data}
+        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+    else:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
+                            status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def get_bonus_money(request, pk):
+    

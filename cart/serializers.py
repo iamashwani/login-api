@@ -132,3 +132,81 @@ class Getreferralserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['referral']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Bonusserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['Bonus']
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+    #     read_only_fields = ['Bonus']
+    # def create(self, validated_data):
+    #     import pdb
+    #     pdb.set_trace()
+    #     instance = self.Meta.model(**validated_data)
+    #     li = ['5 Rs. Entry ticket','Get Another Spin','50 Rs Bonus', '10% Discount Coupon','20% Extra Referral Bonus','5 Rs Bonus','Better luck next time','10 Rs Bonus']
+    #     x = random.choice(li)
+        
+    #     instance = self.Meta.model.objects.filter(**validated_data)
+    #     if x == li[0]:
+    #         instance.Bonus = instance.Bonus + 5
+    #     elif x == li[1]:
+    #         y = 'Get Another Spin'
+    #         return y
+
+    #     elif x == li[2]:
+    #         instance.Bonus = instance.Bonus + 50
+            
+
+    #     elif x == li[3]:
+    #         y = "10% Discount Coupon"
+    #         return y
+
+    #     elif x == li[4]:
+    #         y = "Better luck next time"
+    #         return y
+
+    #     elif x == li[5]:
+    #         instance.Bonus = instance.Bonus + 5
+            
+
+    #     elif x == li[6]:
+    #         y = "Better luck next time"
+    #         return y
+        
+    #     elif x == li[7]:
+    #         instance.Bonus = instance.Bonus + 10
+
+    #     instance.save()
+    #     return instance 
