@@ -15,7 +15,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'mobile', 'name', 'username','profile_id','profile','referral']
         read_only_fields = ['id','name', 'username', 'profile_id','profile','referral']
 
-    def create(self, validated_data):
+    def create(self, validated_data,**extra_fields):
         instance = self.Meta.model(**validated_data)
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords, k=6)))
@@ -33,6 +33,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance = self.Meta.model(**validated_data)
             instance.otp = str(random.randint(1000, 9999))
             instance.username = res
+            # instance.name = self.model(mobile=instance.mobile, **extra_fields)
+            # instance.name.set_password(password)
             instance.name = instance.mobile
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
@@ -114,6 +116,17 @@ class GetResponceSerializer(serializers.Serializer):
         return "success"
 
 
+class GetResponceRedeemSerializer(serializers.Serializer):
+    status = serializers.SerializerMethodField()
+    message = serializers.SerializerMethodField()
+
+    def get_status(self, obj):
+        return True
+
+    def get_message(self, obj):
+        return "User can Redeem Someone's Referral code"
+
+
 class Transactionserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
@@ -132,6 +145,18 @@ class Getreferralserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['referral']
+
+
+class RedeemReferralcodeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['referral_status']
+
+
+class Bonusserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['total_bonus_amount', 'description']
 
 
 

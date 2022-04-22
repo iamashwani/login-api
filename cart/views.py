@@ -6,7 +6,8 @@ from .models import User,Wallet,Transaction
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
     GetTotalwalletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
-    walletserializer_add,GetResponceSerializer,TransactionHistoryserializer,Transactionserializer,Getreferralserializer
+    walletserializer_add,GetResponceSerializer,TransactionHistoryserializer,\
+    Transactionserializer,Getreferralserializer,Bonusserializer,RedeemReferralcodeserializer,GetResponceRedeemSerializer
 from rest_framework.decorators import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
@@ -212,15 +213,107 @@ def getreferral(request, pk):
         qs = Wallet.objects.get(pk=pk)
         if request.method == 'GET':
             serializer = Getreferralserializer(qs)
+            if qs.referral is not None:
+                json_data = serializer.data
+                x = GetResponceSerializer(json_data)
+                x = {**x.data, **json_data}
+                return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+            else:
+                return JsonResponse({'status': False, 'message': 'Referral Code Cannot Get'})
+    except:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def RedeemReferralcode(request, pk):
+    try:
+        qs = Wallet.objects.get(pk=pk)
+        if request.method == 'POST':
+            # import pdb
+            # pdb.set_trace()
+            serializer = RedeemReferralcodeserializer(qs, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                # referral_status = request.data['referral_status']
+                referral = request.data['referral']
+                # qs.referral_status = referral_status
+                if qs.referral == referral:
+                    qs.referral_status = qs.referral
+                    qs.referral_status = True
+                    qs.save()
+                    return JsonResponse({'status': True,'message': 'Redeemed Successfully'}, status=status.HTTP_200_OK, safe=False)
+                else:
+                    return JsonResponse({'status': False,'message': 'Referral Code Cannot Redeem'})
+    except:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_bonus_money(request, pk):
+    try:
+        qs = Wallet.objects.get(pk=pk)
+        if request.method == 'GET':
+            serializer = Bonusserializer(qs)
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
             x = {**x.data, **json_data}
             return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
-        else:
-            return JsonResponse(json_data,status=status.HTTP_200_OK, safe = False)
     except:
-        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
+
+import random
+@api_view(['GET', 'POST'])
+def bonus_money(request, pk):
+    # import pdb
+    # pdb.set_trace()
+    if request.method == 'POST':
+        user = User.objects.get(pk=pk)
+        qs = Wallet.objects.get(pk=pk)
+        serializer = Bonusserializer(qs, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+
+            li = ['5 Rs. Entry ticket','Get Another Spin','50 Rs Bonus', '10% Discount Coupon','20% Extra Referral Bonus','5 Rs Bonus','Better luck next time','10 Rs Bonus']
+            x = random.choice(li)
+            if x == li[0]:
+                qs.Bonus = qs.Bonus + 5
+                qs.save()
+                obj = Transaction.objects.create(user=user, wallet=qs, Bonus=qs.Bonus, description=x,)
+                obj.save()
+            elif x == li[1]:
+                y = 'Get Another Spin'
+                return y
+            elif x == li[2]:
+                qs.Bonus = qs.Bonus + 50
+                qs.save()
+                obj = Transaction.objects.create(user=user, wallet=qs, Bonus=qs.Bonus, description=x, )
+                obj.save()
+            elif x == li[3]:
+                y = "10% Discount Coupon"
+                return y
+            elif x == li[4]:
+                y = "Better luck next time"
+                return y
+            elif x == li[5]:
+                qs.Bonus = qs.Bonus + 5
+                qs.save()
+                obj = Transaction.objects.create(user=user, wallet=qs, Bonus=qs.Bonus, description=x, )
+                obj.save()
+            elif x == li[6]:
+                y = "Better luck next time"
+                return y
+            elif x == li[7]:
+                qs.Bonus = qs.Bonus + 10
+                qs.save()
+            obj = Wallet.objects.create(wallet=qs,Bonus = qs.Bonus)
+            obj.save()
+        json_data = serializer.data
+        x = GetResponceSerializer(json_data)
+        x = {**x.data, **json_data}
+        return JsonResponse(x, status=status.HTTP_200_OK, safe=False)
+    else:
+        return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
+                            status=status.HTTP_400_BAD_REQUEST)
 # @api_view(['GET'])
 # def total_of_add_money(request,pk):
 #     try:

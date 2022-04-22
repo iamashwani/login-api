@@ -49,6 +49,10 @@ class Wallet(models.Model):
     description = models.CharField(max_length=200, null=True, blank=True, )
     referral = models.CharField(max_length=200, null=True, blank=True)
     referral_status = models.BooleanField(null=True, blank=True)
+    Recieved_sreferral = models.CharField(max_length=200, null=True, blank=True)
+    total_bonus_amount = models.FloatField(default=0)
+    # ticket_entry = models.CharField(max_length=200, null=True, blank=True)
+    # referral_bonus = models.CharField(max_length=200, null=True, blank=True)
 
 
 class Transaction(models.Model):
@@ -59,5 +63,11 @@ class Transaction(models.Model):
     winning_cash = models.FloatField(default=0)
     date = models.DateField(null=True, auto_now_add=True)
     time = models.TimeField(null=True, auto_now_add=True)
+    Bonus = models.FloatField(default=0)
+
+
+
+
+
 
 
