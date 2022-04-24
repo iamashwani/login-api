@@ -12,13 +12,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'mobile', 'name', 'username','profile_id','profile']
-        read_only_fields = ['id','name', 'username', 'profile_id','profile']
+        fields = ['id', 'mobile', 'name', 'username','profile_id','profile','referral']
+        read_only_fields = ['id','name', 'username', 'profile_id','profile','referral']
 
-    def create(self, validated_data):
+    def create(self, validated_data,**extra_fields):
         instance = self.Meta.model(**validated_data)
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords, k=6)))
+        mywordss = "123456789abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        referral = "" + str(''.join(random.choices(mywordss, k=8)))
         # path = os.path.join(BASE_DIR, 'static/images')
         # dir_list = os.listdir(path)
         # random_logo = random.choice(dir_list)
@@ -31,10 +33,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance = self.Meta.model(**validated_data)
             instance.otp = str(random.randint(1000, 9999))
             instance.username = res
+            # instance.name = self.model(mobile=instance.mobile, **extra_fields)
+            # instance.name.set_password(password)
             instance.name = instance.mobile
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id
+            instance.referral = referral
             # instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
             instance.save()
             # path = os.path.join(BASE_DIR, 'static/images')
@@ -111,19 +116,44 @@ class GetResponceSerializer(serializers.Serializer):
         return "success"
 
 
+class GetResponceRedeemSerializer(serializers.Serializer):
+    status = serializers.SerializerMethodField()
+    message = serializers.SerializerMethodField()
 
-class Transcationserializer(serializers.ModelSerializer):
+    def get_status(self, obj):
+        return True
+
+    def get_message(self, obj):
+        return "User can Redeem Someone's Referral code"
+
+
+class Transactionserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
         # read_only_fields = ('winning_cash',)
 
 
-class TranscationHistoryserializer(serializers.ModelSerializer):
+class TransactionHistoryserializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ['amount', 'description', 'date', 'time']
         # read_only_fields = ('wallet',)
 
 
+class Getreferralserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['referral']
 
+
+class RedeemReferralcodeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['referral']
+
+
+class Bonusserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['total_bonus_amount', 'description']
