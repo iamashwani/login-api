@@ -49,6 +49,7 @@ class User(models.Model):
     profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True)
     profile_id = models.IntegerField(default=0)
     referral = models.CharField(max_length=150,null=True, blank=True,)
+    referral_status = models.BooleanField(null=True, blank=True)
 
 
 class Wallet(models.Model):
@@ -72,7 +73,7 @@ class Wallet(models.Model):
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    # wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
     description = models.CharField(max_length=200,blank=True,)
     winning_cash = models.FloatField(default=0)

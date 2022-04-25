@@ -17,6 +17,7 @@ import urllib.request as urllib2
 # from .serializers import RefferCodeSerializer
 # from rest_framework.generics import ListAPIView
 # from .models import ReferralCode
+import datetime
 
 
 def send_otp(mobile, otp):
@@ -35,10 +36,13 @@ class RegistrationAPIView(APIView):
     serializer_class = ProfileSerializer
 
     def post(self, request):
+        import pdb
+        pdb.set_trace()
         try:
-
             mobile = request.data['mobile']
             data = User.objects.filter(mobile=mobile).first()
+            referral = request.data.get('referral')
+            data_ref = User.objects.filter(referral=referral).first()
             if data is not None:
                 serializer = self.serializer_class(data=request.data)
                 mobile = request.data['mobile']
@@ -52,21 +56,50 @@ class RegistrationAPIView(APIView):
                     return JsonResponse(content, status=status.HTTP_201_CREATED)
                 else:
                     return JsonResponse({'status': False, "message": "Login in Failed"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
+
+            elif data_ref:
                 serializer = self.serializer_class(data=request.data)
                 mobile = request.data['mobile']
+                referral = request.data['referral']
                 if serializer.is_valid(raise_exception=True):
                     instance = serializer.save()
-                    content = {'status': True, 'message': 'success','id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
-                               'username': instance.username,'profile_id': instance.profile_id}
+                    content = {'status': True, 'message': 'success', 'id': instance.id, 'mobile': instance.mobile,
+                               'otp': instance.otp, 'name': instance.name,
+                               'username': instance.username, 'profile_id': instance.profile_id}
                     mobile = instance.mobile
                     otp = instance.otp
-                    wallet = 10
-                    wall = Wallet.objects.create(user=instance,total_amount=wallet)
                     send_otp(mobile, otp)
+                    wallet = 50
+                    description = "Welcome bonus"
+                    wall = Wallet.objects.create(user=instance, total_amount=wallet, description=description, )
+                    wall.save()
+                    obj = Transaction.objects.create(user=instance, amount=wallet, description=description, )
+                    obj.save()
+                    user = User.objects.filter(referral=request.user)
+                    current_datetime = datetime.datetime.now()
+                    user_referral = UserReferral.objects.update(referred_by=instance.id,referral_resource=referral,joined_date=current_datetime)
                     return JsonResponse(content, status=status.HTTP_201_CREATED)
                 else:
-                    return JsonResponse({'status': False, "message": "Login in Failed"}, status=status.HTTP_400_BAD_REQUEST)
+                    return JsonResponse({'status': False, "message": "Login in Failed"},status=status.HTTP_400_BAD_REQUEST)
+            # else:
+            #     serializer = self.serializer_class(data=request.data)
+            #     mobile = request.data['mobile']
+            #     if serializer.is_valid(raise_exception=True):
+            #         instance = serializer.save()
+            #         content = {'status': True, 'message': 'success','id': instance.id,'mobile': instance.mobile, 'otp': instance.otp, 'name': instance.name,
+            #                    'username': instance.username,'profile_id': instance.profile_id}
+            #         mobile = instance.mobile
+            #         otp = instance.otp
+            #         wallet = 50
+            #         description = "Welcome bonus"
+            #         wall = Wallet.objects.create(user=instance,total_amount=wallet,description=description,)
+            #         wall.save()
+            #         obj = Transaction.objects.create(user=instance, amount=wallet, description=description,)
+            #         obj.save()
+            #         send_otp(mobile, otp)
+            #         return JsonResponse(content, status=status.HTTP_201_CREATED)
+            #     else:
+            #         return JsonResponse({'status': False, "message": "Login in Failed"}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
                                 status=status.HTTP_503_SERVICE_UNAVAILABLE)
@@ -170,7 +203,7 @@ def transactionmoney(request, pk):
                     qs.winning_cash = qs.winning_cash + amount
                     qs.total_amount = qs.total_amount + amount
                     qs.save()
-                obj = Transaction.objects.create(user=user, wallet=qs, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
+                obj = Transaction.objects.create(user=user, amount=qs.amount,description=description,winning_cash=qs.winning_cash)
                 obj.save()
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
@@ -210,7 +243,7 @@ def transactionsHistory(request,pk):
 @api_view(['GET'])
 def getreferral(request, pk):
     try:
-        qs = Wallet.objects.get(pk=pk)
+        qs = User.objects.get(pk=pk)
         if request.method == 'GET':
             serializer = Getreferralserializer(qs)
             if qs.referral is not None:
@@ -228,22 +261,18 @@ def getreferral(request, pk):
 def RedeemReferralcode(request, pk):
     try:
         qs = User.objects.get(pk=pk)
-        # user = User.objects.get(pk.pk)
-        # user.referred_by = user.referred_by
+        wll = Wallet.objects.get(pk=pk)
         if request.method == 'POST':
-            import pdb
-            pdb.set_trace()
             serializer = RedeemReferralcodeserializer(qs, data=request.data)
             if serializer.is_valid(raise_exception=True):
-                # referral_status = request.data['referral_status']
                 referral = request.data['referral']
-                # qs.referral_status = referral_status
                 if qs.referral == referral:
                     qs.referral_status = qs.referral
                     qs.referral_status = True
                     qs.save()
                     obj = UserReferral.objects.create(user=qs, referral_url=qs.referral_status)
                     obj.save()
+                    wall = Wallet.objects.update(user=qs, total_amount=wll.total_amount + 50)
                     return JsonResponse({'status': True,'message': 'Redeemed Successfully'}, status=status.HTTP_200_OK, safe=False)
                 else:
                     return JsonResponse({'status': False,'message': 'Referral Code Cannot Redeem'})
@@ -308,7 +337,7 @@ def bonus_money(request, pk):
             elif x == li[7]:
                 qs.Bonus = qs.Bonus + 10
                 qs.save()
-            obj = Wallet.objects.create(wallet=qs,Bonus = qs.Bonus)
+            obj = Wallet.objects.create(wallet=qs,Bonus=qs.Bonus)
             obj.save()
         json_data = serializer.data
         x = GetResponceSerializer(json_data)

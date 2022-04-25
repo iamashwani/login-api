@@ -1,7 +1,6 @@
 from email.policy import default
 from rest_framework import serializers
 from .models import User,Wallet,Transaction
-
 import pyotp
 import random
 import os
@@ -33,37 +32,12 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance = self.Meta.model(**validated_data)
             instance.otp = str(random.randint(1000, 9999))
             instance.username = res
-            # instance.name = self.model(mobile=instance.mobile, **extra_fields)
-            # instance.name.set_password(password)
             instance.name = instance.mobile
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id
             instance.referral = referral
-            # instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
             instance.save()
-            # path = os.path.join(BASE_DIR, 'static/images')
-            # dir_list = os.listdir(path)
-            # random_logo = random.choice(dir_list)
-            #
-            # extension = random_logo.split(".")[-1]
-            # ext2 = random_logo.replace(extension, "png")
-            # og_filename = ext2.split('.')[0]
-            # og_filename2 = ext2.replace(og_filename, str(instance.id))
-            # # import pdb
-            # # pdb.set_trace()
-            #
-            # user_folder = 'static/images/profile/'
-            # if not os.path.exists(user_folder):
-            #     os.mkdir(user_folder)
-            #
-            # img_save_path = "%s/%s" % (user_folder, og_filename2)
-            # with open(img_save_path, 'wb+') as f:
-            #     for chunk in og_filename2.chunks():
-            #         f.write(chunk)
-            #     f.close()
-            # instance.profile = 'profile/'+og_filename2
-            # instance.save()
         return instance
 
 
@@ -143,13 +117,13 @@ class TransactionHistoryserializer(serializers.ModelSerializer):
 
 class Getreferralserializer(serializers.ModelSerializer):
     class Meta:
-        model = Wallet
+        model = User
         fields = ['referral']
 
 
 class RedeemReferralcodeserializer(serializers.ModelSerializer):
     class Meta:
-        model = Wallet
+        model = User
         fields = ['referral']
 
 
