@@ -150,7 +150,7 @@ class Getreferralserializer(serializers.ModelSerializer):
 class RedeemReferralcodeserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['referral_status']
+        fields = ['referral']
 
 
 class Bonusserializer(serializers.ModelSerializer):

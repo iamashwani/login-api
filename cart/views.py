@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from django.conf import settings
-from .models import User,Wallet,Transaction
+from .models import User,Wallet,Transaction,UserReferral
 from .serializers import ProfileSerializer, \
     VerifyOTPSerializer, UserProfileChangeSerializer,\
     GetTotalwalletserializer,UserGetProfileChangeSerializer,walletserializer_deduct,\
@@ -227,10 +227,12 @@ def getreferral(request, pk):
 @api_view(['POST'])
 def RedeemReferralcode(request, pk):
     try:
-        qs = Wallet.objects.get(pk=pk)
+        qs = User.objects.get(pk=pk)
+        # user = User.objects.get(pk.pk)
+        # user.referred_by = user.referred_by
         if request.method == 'POST':
-            # import pdb
-            # pdb.set_trace()
+            import pdb
+            pdb.set_trace()
             serializer = RedeemReferralcodeserializer(qs, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 # referral_status = request.data['referral_status']
@@ -240,6 +242,8 @@ def RedeemReferralcode(request, pk):
                     qs.referral_status = qs.referral
                     qs.referral_status = True
                     qs.save()
+                    obj = UserReferral.objects.create(user=qs, referral_url=qs.referral_status)
+                    obj.save()
                     return JsonResponse({'status': True,'message': 'Redeemed Successfully'}, status=status.HTTP_200_OK, safe=False)
                 else:
                     return JsonResponse({'status': False,'message': 'Referral Code Cannot Redeem'})
@@ -272,7 +276,6 @@ def bonus_money(request, pk):
         qs = Wallet.objects.get(pk=pk)
         serializer = Bonusserializer(qs, data=request.data)
         if serializer.is_valid(raise_exception=True):
-
             li = ['5 Rs. Entry ticket','Get Another Spin','50 Rs Bonus', '10% Discount Coupon','20% Extra Referral Bonus','5 Rs Bonus','Better luck next time','10 Rs Bonus']
             x = random.choice(li)
             if x == li[0]:
@@ -314,6 +317,10 @@ def bonus_money(request, pk):
     else:
         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 # @api_view(['GET'])
 # def total_of_add_money(request,pk):
 #     try:
@@ -383,4 +390,3 @@ def bonus_money(request, pk):
 #     except:
 #         return JsonResponse({"status": False, "message": "Service temporarily unavailable, try again later", },
 #                         status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
