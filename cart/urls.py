@@ -19,8 +19,8 @@ urlpatterns = [
     path('getreferral/<int:pk>/', views.getreferral, name='getreferral'),
     path('redeem_referral_code/<int:pk>/', views.RedeemReferralcode, name='redeem_referral_code'),
 
-    path('claim_wheel_bonus/<int:pk>/', views.claim_wheel_bonus, name='claim_wheel_bonus'),
-    path('get_wheel_details/<int:pk>/', views.get_wheel_details, name='get_wheel_details')
+    path('get_wheel_details/<int:id>/', views.get_wheel_details, name='get_wheel_details'),
+    path('claim_wheel_bonus/<int:id>/', views.claim_wheel_bonus, name='claim_wheel_bonus'),
 
     # path('referral/', RefferCodeJsonView.as_view()),
 

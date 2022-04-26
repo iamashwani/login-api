@@ -300,30 +300,34 @@ def RedeemReferralcode(request, pk):
 
 
 @api_view(['GET'])
-def get_wheel_details(request, pk):
+def get_wheel_details(request, id):
     if request.method == 'GET':
-        user = User.objects.get(pk=pk)
-        qs = Wallet.objects.get(user=pk)
+        qs = User.objects.get(pk=id)
+        wellet = Wallet.objects.get(pk=id)
         serializer = Bonusserializer(qs, data=request.data)
         if serializer.is_valid(raise_exception=True):
             li = ['5 Rs. Entry ticket', 'Get Another Spin', '50 Rs Bonus', '10% Discount Coupon',
                   '20% Extra Referral Bonus', '5 Rs Bonus', 'Better luck next time', '10 Rs Bonus']
             x = random.randint(0, len(li) - 1)
-            obj = Wheel.objects.create(user=user,wheels_index=x, wallet=qs)
+            obj = Wheel.objects.create(user=qs,wheels_index=x, wallet=wellet)
             obj.save()
-        return JsonResponse(x, safe=False)
+        return JsonResponse({"status": True, "message": "success","data":li, "winning_Index": x},safe=False)
     else:
         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
                             status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])
-def claim_wheel_bonus(request, pk):
+def claim_wheel_bonus(request, id):
     try:
         if request.method == 'POST':
-            wheel = Wheel.objects.get(pk=pk)
-            user = User.objects.get(wheel=pk)
-            qs = Wallet.objects.get(wheel=pk)
+            user = User.objects.get(pk=id)
+            wheel = Wheel.objects.filter(user=id).order_by('-id')[0]
+            qs = Wallet.objects.get(user=id)
+
+            # wheel = Wheel.objects.get(pk=wheel_id)
+            # user = User.objects.get(wheel=wheel_id)
+            # qs = Wallet.objects.get(wheel=wheel_id)
             serializer = Bonusserializer12(qs, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 if wheel.wheels_index == '0':
@@ -356,7 +360,7 @@ def claim_wheel_bonus(request, pk):
                     obj = Transaction.objects.create(user=user,amount=5, description="5 Rs Bonus",transactiontype="claim_wheel_bonus" )
                     obj.save()
                 elif wheel.wheels_index == '6':
-                    return JsonResponse({"status": True, "message": "Better luck next time"})
+                    return JsonResponse({"status": False, "message": "Better luck next time"})
                 elif wheel.wheels_index == '7':
                     qs.Bonus = qs.Bonus + 10
                     qs.total_amount = qs.total_amount + 10
