@@ -49,7 +49,8 @@ class User(models.Model):
     profile = models.ImageField(upload_to=content_file_name, storage=OverwriteStorage(), blank=True)
     profile_id = models.IntegerField(default=0)
     referral = models.CharField(max_length=150,null=True, blank=True,)
-    referral_status = models.BooleanField(null=True, blank=True)
+    # referral_status = models.BooleanField(null=True, blank=True)
+
 
 
 class Wallet(models.Model):
@@ -63,28 +64,31 @@ class Wallet(models.Model):
     withdraw_amount = models.FloatField(default=0)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
     description = models.CharField(max_length=200, null=True, blank=True, )
-    referral = models.CharField(max_length=200, null=True, blank=True)
-    referral_status = models.BooleanField(null=True, blank=True)
-    Recieved_sreferral = models.CharField(max_length=200, null=True, blank=True)
     total_bonus_amount = models.FloatField(default=0)
-    # ticket_entry = models.CharField(max_length=200, null=True, blank=True)
-    # referral_bonus = models.CharField(max_length=200, null=True, blank=True)
+    Bonus = models.FloatField(default=0)
 
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
     # wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    transactiontype = models.CharField(max_length=200,blank=True,)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2, default=0)
     description = models.CharField(max_length=200,blank=True,)
     winning_cash = models.FloatField(default=0)
     date = models.DateField(null=True, auto_now_add=True)
     time = models.TimeField(null=True, auto_now_add=True)
-    Bonus = models.FloatField(default=0)
 
 
 class UserReferral(SoftDeleteModel):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE,related_name="user_referral_user")
     referred_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE,related_name="user_referred_by_user")
     joined_date = models.DateTimeField(null=True, blank=True)
+    referral_date = models.DateTimeField(null=True, blank=True)
     referral_url = models.CharField(max_length=500, null=True, blank=True)
-    referral_resource = models.CharField(max_length=500, null=True, blank=True)
+    # referral_resource = models.CharField(max_length=500, null=True, blank=True)
+
+
+class Wheel(models.Model):
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    wallet = models.ForeignKey(Wallet,null=True, on_delete=models.CASCADE)
+    wheels_index = models.CharField(max_length=200, null=True, blank=True)

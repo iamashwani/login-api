@@ -1,6 +1,6 @@
 from email.policy import default
 from rest_framework import serializers
-from .models import User,Wallet,Transaction
+from .models import User,Wallet,Transaction,Wheel
 import pyotp
 import random
 import os
@@ -129,8 +129,13 @@ class RedeemReferralcodeserializer(serializers.ModelSerializer):
 
 class Bonusserializer(serializers.ModelSerializer):
     class Meta:
-        model = Wallet
-        fields = ['total_bonus_amount', 'description']
+        model = Wheel
+        fields = ['wheels_index']
 
+
+class Bonusserializer12(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
 
 
