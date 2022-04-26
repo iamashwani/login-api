@@ -8,16 +8,22 @@ urlpatterns = [
 
     path('register/', RegistrationAPIView.as_view()),
     path('verify/<int:id>/', VerifyOTPView.as_view()),
+
     path('get_profile/<int:pk>/', views.Get_Profile, name='get_profile'),
     path('update_profile/<int:pk>/', views.Update_Profile, name='update_profile'),
 
     path('get_wallet/<int:pk>/', views.get_wallet, name='get_wallet'),
-    path('transcation/<int:pk>/', views.transcationmoney, name='transcation'),
-    path('transcation_history/<int:pk>/', views.TranscationsHistory, name='transcation_history'),
+    path('transaction/<int:pk>/', views.transactionmoney, name='transaction'),
+    path('transaction_history/<int:pk>/', views.transactionsHistory, name='transaction_history'),
+
     path('getreferral/<int:pk>/', views.getreferral, name='getreferral'),
-    path('get_bonus_money/<int:pk>',views.get_bonus_money,name ='get_bonus_money'),
-    path('bonus_money/<int:pk>',views.bonus_money,name = 'bonus_money')
-   # path('add_bonus_money/<int:pk>', BonusMoneyAPIView.as_view())
+    path('redeem_referral_code/<int:pk>/', views.RedeemReferralcode, name='redeem_referral_code'),
+
+    path('get_bonus_money/<int:pk>/', views.claim_wheel_money, name='get_bonus_money'),
+
+    path('wheel_index/<int:pk>/', views.wheel_index, name='wheel_index')
+
+    # path('referral/', RefferCodeJsonView.as_view()),
 
     # path('total_of_add_money/<int:pk>', views.total_of_add_money, name='total_of_add_money'),
     # path('total_of_win_money/<int:pk>', views.total_of_win_money, name='total_of_win_money'),
@@ -25,6 +31,6 @@ urlpatterns = [
     # path('withdraw_amount/<int:pk>/', views.withdraw_amount, name='withdraw_amount'),
     # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
-urlpatterns = format_suffix_patterns(urlpatterns)
+# urlpatterns = format_suffix_patterns(urlpatterns)
 
 # handler404 = 'cart.views.api_500_handler'

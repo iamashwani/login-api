@@ -1,6 +1,6 @@
 from email.policy import default
 from rest_framework import serializers
-from .models import User,Wallet,Transcations
+from .models import User,Wallet,Transaction,Wheel
 
 import pyotp
 import random
@@ -12,13 +12,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'mobile', 'name', 'username','profile_id','profile']
-        read_only_fields = ['id','name', 'username', 'profile_id','profile']
+        fields = ['id', 'mobile', 'name', 'username','profile_id','profile','referral']
+        read_only_fields = ['id','name', 'username', 'profile_id','profile','referral']
 
-    def create(self, validated_data):
+    def create(self, validated_data,**extra_fields):
         instance = self.Meta.model(**validated_data)
         mywords = "123456789"
         res = "expert@" + str(''.join(random.choices(mywords, k=6)))
+        mywordss = "123456789abcdefghijklmnopqrstABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        referral = "" + str(''.join(random.choices(mywordss, k=8)))
         # path = os.path.join(BASE_DIR, 'static/images')
         # dir_list = os.listdir(path)
         # random_logo = random.choice(dir_list)
@@ -31,10 +33,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance = self.Meta.model(**validated_data)
             instance.otp = str(random.randint(1000, 9999))
             instance.username = res
+            # instance.name = self.model(mobile=instance.mobile, **extra_fields)
+            # instance.name.set_password(password)
             instance.name = instance.mobile
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id
+            instance.referral = referral
             # instance.profile_url = 'http://127.0.0.1:8000/' + instance.profile_url
             instance.save()
             # path = os.path.join(BASE_DIR, 'static/images')
@@ -111,21 +116,29 @@ class GetResponceSerializer(serializers.Serializer):
         return "success"
 
 
+class GetResponceRedeemSerializer(serializers.Serializer):
+    status = serializers.SerializerMethodField()
+    message = serializers.SerializerMethodField()
 
-class Transcationserializer(serializers.ModelSerializer):
+    def get_status(self, obj):
+        return True
+
+    def get_message(self, obj):
+        return "User can Redeem Someone's Referral code"
+
+
+class Transactionserializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ['amount', 'description', 'winning_cash']
+        fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
         # read_only_fields = ('winning_cash',)
 
 
-class TranscationHistoryserializer(serializers.ModelSerializer):
+class TransactionHistoryserializer(serializers.ModelSerializer):
     class Meta:
-        model = Transcations
-        fields = ['amount', 'description','insert_date_and_time']
+        model = Transaction
+        fields = ['amount', 'description', 'date', 'time']
         # read_only_fields = ('wallet',)
-
-
 
 
 class Getreferralserializer(serializers.ModelSerializer):
@@ -134,79 +147,18 @@ class Getreferralserializer(serializers.ModelSerializer):
         fields = ['referral']
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class RedeemReferralcodeserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['referral']
 
 
 class Bonusserializer(serializers.ModelSerializer):
     class Meta:
+        model = Wheel
+        fields = ['wheels_index']
+
+class Bonusserializer12(serializers.ModelSerializer):
+    class Meta:
         model = Wallet
-        fields = ['Bonus']
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-    #     read_only_fields = ['Bonus']
-    # def create(self, validated_data):
-    #     import pdb
-    #     pdb.set_trace()
-    #     instance = self.Meta.model(**validated_data)
-    #     li = ['5 Rs. Entry ticket','Get Another Spin','50 Rs Bonus', '10% Discount Coupon','20% Extra Referral Bonus','5 Rs Bonus','Better luck next time','10 Rs Bonus']
-    #     x = random.choice(li)
-        
-    #     instance = self.Meta.model.objects.filter(**validated_data)
-    #     if x == li[0]:
-    #         instance.Bonus = instance.Bonus + 5
-    #     elif x == li[1]:
-    #         y = 'Get Another Spin'
-    #         return y
-
-    #     elif x == li[2]:
-    #         instance.Bonus = instance.Bonus + 50
-            
-
-    #     elif x == li[3]:
-    #         y = "10% Discount Coupon"
-    #         return y
-
-    #     elif x == li[4]:
-    #         y = "Better luck next time"
-    #         return y
-
-    #     elif x == li[5]:
-    #         instance.Bonus = instance.Bonus + 5
-            
-
-    #     elif x == li[6]:
-    #         y = "Better luck next time"
-    #         return y
-        
-    #     elif x == li[7]:
-    #         instance.Bonus = instance.Bonus + 10
-
-    #     instance.save()
-    #     return instance 
+        fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount','Bonus','total_bonus_amount']
