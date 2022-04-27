@@ -338,7 +338,7 @@ def claim_wheel_bonus(request, id):
                                                      transactiontype="claim_wheel_bonus")
                     obj.save()
                 elif wheel.wheels_index == '1':
-                    get_wheel_details()
+                    get_wheel_details(request, id)
                 elif wheel.wheels_index == '2':
                     qs.Bonus = qs.Bonus + 50
                     qs.total_amount = qs.total_amount + 50
