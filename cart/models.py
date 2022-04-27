@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 import os
 from cart.storage import OverwriteStorage
 from .managers import SoftDeletionManager
-
+import uuid
 
 class SoftDeleteModel(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
@@ -92,3 +92,6 @@ class Wheel(models.Model):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     wallet = models.ForeignKey(Wallet,null=True, on_delete=models.CASCADE)
     wheels_index = models.CharField(max_length=200, null=True, blank=True)
+
+
+

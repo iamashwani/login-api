@@ -210,13 +210,20 @@ def transactionmoney(request, pk):
                                                      winning_cash=qs.winning_cash,transactiontype=transaction_history_obj.transactiontype)
                     obj.save()
                 elif amount < 0:
-                    qs.winning_cash = qs.winning_cash + amount
-                    qs.total_amount = qs.total_amount + amount
-                    qs.save()
-                    transaction_history_obj = Transaction()
-                    transaction_history_obj.transactiontype = "Debit Amount"
-                    obj = Transaction.objects.create(user=user, amount=qs.amount,description=description,winning_cash=qs.winning_cash,transactiontype=transaction_history_obj.transactiontype)
-                    obj.save()
+                    
+                        qs.winning_cash = qs.winning_cash + amount
+                        qs.save()
+                        if qs.winning_cash < 0 :
+                            return JsonResponse({"status": False, "message":"insufficient balance"})
+                        qs.total_amount = qs.total_amount + amount
+                        qs.save()
+                        if qs.total_amount < 0 :
+                            return JsonResponse({"status": False, "message":"insufficient balance"})
+                        
+                        transaction_history_obj = Transaction()
+                        transaction_history_obj.transactiontype = "Debit Amount"
+                        obj = Transaction.objects.create(user=user, amount=qs.amount,description=description,winning_cash=qs.winning_cash,transactiontype=transaction_history_obj.transactiontype)
+                        obj.save()  
             json_data = serializer.data
             x = GetResponceSerializer(json_data)
             x = {**x.data, **json_data}
@@ -338,7 +345,10 @@ def claim_wheel_bonus(request, id):
                                                      transactiontype="claim_wheel_bonus")
                     obj.save()
                 elif wheel.wheels_index == '1':
-                    get_wheel_details(request, id)
+                    if get_wheel_details:
+                        return JsonResponse({"status": True,"message": "Respin"})
+                    else:
+                        return JsonResponse({"status": False,"message": "Error"})
                 elif wheel.wheels_index == '2':
                     qs.Bonus = qs.Bonus + 50
                     qs.total_amount = qs.total_amount + 50
@@ -374,6 +384,9 @@ def claim_wheel_bonus(request, id):
     except:
         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later"},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 # if x == li[0]:
 #     qs.Bonus = qs.Bonus + 5

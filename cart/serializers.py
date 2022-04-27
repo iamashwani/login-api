@@ -102,6 +102,8 @@ class GetResponceRedeemSerializer(serializers.Serializer):
 
 
 class Transactionserializer(serializers.ModelSerializer):
+    total_amount = serializers.FloatField(max_value='inf', min_value=0.0)
+    winning_cash = serializers.FloatField(max_value='inf', min_value=0.0)
     class Meta:
         model = Wallet
         fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
@@ -137,5 +139,6 @@ class Bonusserializer12(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         fields = ['total_amount', 'deposit_cash', 'winning_cash','withdraw_amount']
+
 
 
