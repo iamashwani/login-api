@@ -327,7 +327,6 @@ def claim_wheel_bonus(request, id):
             user = User.objects.get(pk=id)
             wheel = Wheel.objects.filter(user=id).order_by('-id')[0]
             qs = Wallet.objects.get(user=id)
-
             # wheel = Wheel.objects.get(pk=wheel_id)
             # user = User.objects.get(wheel=wheel_id)
             # qs = Wallet.objects.get(wheel=wheel_id)
@@ -342,7 +341,10 @@ def claim_wheel_bonus(request, id):
                                                      transactiontype="claim_wheel_bonus")
                     obj.save()
                 elif wheel.wheels_index == '1':
-                    get_wheel_details()
+                     if get_wheel_details:
+                         return JsonResponse({"status":True,"message": "Respain"})
+                     else:
+                         return JsonResponse({"status":False,"message": "Error"})
                 elif wheel.wheels_index == '2':
                     qs.Bonus = qs.Bonus + 50
                     qs.total_amount = qs.total_amount + 50
