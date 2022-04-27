@@ -56,7 +56,7 @@ class User(models.Model):
 class Wallet(models.Model):
     user = models.ForeignKey(User, null=True, related_name='wallet_mobile', on_delete=models.CASCADE)
     # wallet = models.DecimalField(_('Wallet Balance'), max_digits=10, decimal_places=2, default=0)
-    total_amount = models.FloatField(_('Total amount'), default=10)
+    total_amount = models.FloatField(_('Total amount'), default=0)
     add_amount = models.FloatField(_('Add amount'), default=0)
     deposit_cash = models.FloatField(_('Full Add amount'),default=0)
     win_amount = models.FloatField(default=0)

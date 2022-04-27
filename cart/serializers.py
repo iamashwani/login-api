@@ -24,6 +24,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         # dir_list = os.listdir(path)
         # random_logo = random.choice(dir_list)
 
+
         if self.Meta.model.objects.filter(**validated_data).exists():
             instance = self.Meta.model.objects.filter(**validated_data).last()
             instance.otp = str(random.randint(1000, 9999))
@@ -32,7 +33,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             instance = self.Meta.model(**validated_data)
             instance.otp = str(random.randint(1000, 9999))
             instance.username = res
-            instance.name = instance.mobile
+            instance.name = str(f"{instance.mobile[0:2]}****{instance.mobile[7:10]}")
+            # instance.name = instance.mobile
             instance.profile_id = instance.profile_id
             instance.profile = instance.profile
             instance.id = instance.id

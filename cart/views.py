@@ -71,7 +71,7 @@ class RegistrationAPIView(APIView):
                     send_otp(mobile, otp)
                     wallet = 50
                     description = "Welcome bonus"
-                    wall = Wallet.objects.create(user=instance, total_amount=wallet, description=description, )
+                    wall = Wallet.objects.create(user=instance, total_amount=wallet,winning_cash=wallet, description=description, )
                     wall.save()
                     transaction_history_obj = Transaction()
                     transaction_history_obj.transactiontype = "Referral Bonus"
@@ -94,7 +94,7 @@ class RegistrationAPIView(APIView):
                     otp = instance.otp
                     wallet = 50
                     description = "Welcome bonus"
-                    wall = Wallet.objects.create(user=instance,total_amount=wallet,description=description,)
+                    wall = Wallet.objects.create(user=instance, total_amount=wallet,winning_cash=wallet,description=description,)
                     wall.save()
                     transaction_history_obj = Transaction()
                     transaction_history_obj.transactiontype = "Welcome Bonus"
@@ -150,7 +150,6 @@ def Get_Profile(request, pk):
 
 @api_view(['GET', 'POST'])
 def Update_Profile(request,pk):
-
     if request.method == 'GET':
         snippet = User.objects.get(pk=pk)
         serializer = UserProfileChangeSerializer(snippet)
@@ -212,6 +211,8 @@ def transactionmoney(request, pk):
                 elif amount < 0:
                     qs.winning_cash = qs.winning_cash + amount
                     qs.total_amount = qs.total_amount + amount
+                    if qs.winning_cash < 0:
+                        return JsonResponse({"status": False, "message": "Insufficient Balance"})
                     qs.save()
                     transaction_history_obj = Transaction()
                     transaction_history_obj.transactiontype = "Debit Amount"
@@ -232,8 +233,10 @@ def transactionmoney(request, pk):
 def transactionsHistory(request,pk):
     try:
         if request.method == 'GET':
-            wll = Wallet.objects.get(pk=pk)
-            qs = Transaction.objects.filter(wallet=wll).order_by('-pk')
+            import pdb
+            pdb.set_trace()
+            wll = User.objects.get(pk=pk)
+            qs = Transaction.objects.filter(user=wll).order_by('-pk')
             serializer = TransactionHistoryserializer(qs)
             json_data = []
             for x in qs:
@@ -311,7 +314,7 @@ def get_wheel_details(request, id):
             x = random.randint(0, len(li) - 1)
             obj = Wheel.objects.create(user=qs,wheels_index=x, wallet=wellet)
             obj.save()
-        return JsonResponse({"status": True, "message": "success","data":li, "winning_Index": x},safe=False)
+        return JsonResponse({"status": True, "message": "success","data": li, "winning_Index": x},safe=False)
     else:
         return JsonResponse({"status": False, "message": "Something went wrong. Please try again later", },
                             status=status.HTTP_400_BAD_REQUEST)
@@ -333,6 +336,7 @@ def claim_wheel_bonus(request, id):
                 if wheel.wheels_index == '0':
                     qs.Bonus = qs.Bonus + 5
                     qs.total_amount = qs.total_amount + 5
+                    qs.winning_cash = qs.winning_cash + 5
                     qs.save()
                     obj = Transaction.objects.create(user=user, amount=5, description="5 Rs. Entry ticket",
                                                      transactiontype="claim_wheel_bonus")
@@ -342,6 +346,7 @@ def claim_wheel_bonus(request, id):
                 elif wheel.wheels_index == '2':
                     qs.Bonus = qs.Bonus + 50
                     qs.total_amount = qs.total_amount + 50
+                    qs.winning_cash = qs.winning_cash + 50
                     qs.save()
                     obj = Transaction.objects.create(user=user, amount=50, description="50 Rs Bonus", transactiontype = "claim_wheel_bonus")
                     obj.save()
@@ -350,12 +355,14 @@ def claim_wheel_bonus(request, id):
                 elif wheel.wheels_index == '4':
                     qs.Bonus = qs.Bonus + 10
                     qs.total_amount = qs.total_amount + 10
+                    qs.winning_cash = qs.winning_cash + 10
                     qs.save()
                     obj = Transaction.objects.create(user=user, amount=10, description="20% Extra Referral Bonus",transactiontype="claim_wheel_bonus")
                     obj.save()
                 elif wheel.wheels_index == '5':
                     qs.Bonus = qs.Bonus + 5
                     qs.total_amount = qs.total_amount + 5
+                    qs.winning_cash = qs.winning_cash + 5
                     qs.save()
                     obj = Transaction.objects.create(user=user,amount=5, description="5 Rs Bonus",transactiontype="claim_wheel_bonus" )
                     obj.save()
@@ -364,6 +371,7 @@ def claim_wheel_bonus(request, id):
                 elif wheel.wheels_index == '7':
                     qs.Bonus = qs.Bonus + 10
                     qs.total_amount = qs.total_amount + 10
+                    qs.winning_cash = qs.winning_cash + 10
                     qs.save()
                     obj = Transaction.objects.create(user=user, amount=10, description="10 Rs Bonus", transactiontype="claim_wheel_bonus")
                     obj.save()
